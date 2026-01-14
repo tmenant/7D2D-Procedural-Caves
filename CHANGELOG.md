@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.2.1] - 2026-01-14
+
+### Fixed
+- Fixed invalid path error for dedicated servers trying to get ModConfig.xml
+
 ## [2.2.0] - 2025-12-20
 
 ### Fixed
@@ -102,6 +107,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - First release
 
 [unreleased]: https://github.com/tmenant/7D2D-Procedural-Caves/compare/master...unreleased
+[2.2.1]: https://github.com/tmenant/7D2D-Procedural-Caves/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/tmenant/7D2D-Procedural-Caves/compare/2.1.1...2.2.0
 [2.1.1]: https://github.com/tmenant/7D2D-Procedural-Caves/compare/2.1.0...2.1.1
 [2.1.0]: https://github.com/tmenant/7D2D-Procedural-Caves/compare/2.0.1...2.1.0
