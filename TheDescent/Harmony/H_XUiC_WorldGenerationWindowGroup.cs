@@ -1,7 +1,7 @@
 using HarmonyLib;
 using WorldGenerationEngineFinal;
 
-public class H_XUiC_WorldGenerationWindowGroup
+public class H_XUiC_WorldGenerationWindow
 {
     public static XUiC_ComboBoxInt terrainOffset;
 
@@ -21,43 +21,43 @@ public class H_XUiC_WorldGenerationWindowGroup
 }
 
 
-[HarmonyPatch(typeof(XUiC_WorldGenerationWindowGroup), "OnOpen")]
-public class XUiC_WorldGenerationWindowGroup_OnOpen
+[HarmonyPatch(typeof(XUiC_WorldGenerationWindow), "OnOpen")]
+public class XUiC_WorldGenerationWindow_OnOpen
 {
-    public static void Postfix(XUiC_WorldGenerationWindowGroup __instance)
+    public static void Postfix(XUiC_WorldGenerationWindow __instance)
     {
-        if ((H_XUiC_WorldGenerationWindowGroup.terrainOffset = __instance.GetChildById("terrainOffset") as XUiC_ComboBoxInt) != null)
+        if ((H_XUiC_WorldGenerationWindow.terrainOffset = __instance.GetChildById("terrainOffset") as XUiC_ComboBoxInt) != null)
         {
-            H_XUiC_WorldGenerationWindowGroup.terrainOffset.Value = (int)CaveConfig.terrainOffset;
+            H_XUiC_WorldGenerationWindow.terrainOffset.Value = (int)CaveConfig.terrainOffset;
         }
 
-        if ((H_XUiC_WorldGenerationWindowGroup.caveNetworks = __instance.GetChildById("caveNetworks") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>) != null)
+        if ((H_XUiC_WorldGenerationWindow.caveNetworks = __instance.GetChildById("caveNetworks") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>) != null)
         {
-            H_XUiC_WorldGenerationWindowGroup.caveNetworks.Value = WorldBuilder.GenerationSelections.Default;
+            H_XUiC_WorldGenerationWindow.caveNetworks.Value = WorldBuilder.GenerationSelections.Default;
         }
 
-        if ((H_XUiC_WorldGenerationWindowGroup.caveEntrances = __instance.GetChildById("caveEntrances") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>) != null)
+        if ((H_XUiC_WorldGenerationWindow.caveEntrances = __instance.GetChildById("caveEntrances") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>) != null)
         {
-            H_XUiC_WorldGenerationWindowGroup.caveEntrances.Value = WorldBuilder.GenerationSelections.Default;
+            H_XUiC_WorldGenerationWindow.caveEntrances.Value = WorldBuilder.GenerationSelections.Default;
         }
 
-        if ((H_XUiC_WorldGenerationWindowGroup.caveWater = __instance.GetChildById("caveWater") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>) != null)
+        if ((H_XUiC_WorldGenerationWindow.caveWater = __instance.GetChildById("caveWater") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>) != null)
         {
-            H_XUiC_WorldGenerationWindowGroup.caveWater.Value = WorldBuilder.GenerationSelections.Default;
+            H_XUiC_WorldGenerationWindow.caveWater.Value = WorldBuilder.GenerationSelections.Default;
         }
     }
 }
 
 
-[HarmonyPatch(typeof(XUiC_WorldGenerationWindowGroup), "GenerateButton_OnPressed")]
-public class XUiC_WorldGenerationWindowGroup_GenerateButton_OnPressed
+[HarmonyPatch(typeof(XUiC_WorldGenerationWindow), "GenerateButton_OnPressed")]
+public class XUiC_WorldGenerationWindow_GenerateButton_OnPressed
 {
     public static bool Prefix(XUiController _sender, int _mouseButton)
     {
-        CaveConfig.terrainOffset = H_XUiC_WorldGenerationWindowGroup.TerrainOffset;
-        CaveConfig.caveNetworks = H_XUiC_WorldGenerationWindowGroup.CaveNetworks;
-        CaveConfig.caveEntrances = H_XUiC_WorldGenerationWindowGroup.CaveEntrances;
-        CaveConfig.caveWater = H_XUiC_WorldGenerationWindowGroup.CaveWater;
+        CaveConfig.terrainOffset = H_XUiC_WorldGenerationWindow.TerrainOffset;
+        CaveConfig.caveNetworks = H_XUiC_WorldGenerationWindow.CaveNetworks;
+        CaveConfig.caveEntrances = H_XUiC_WorldGenerationWindow.CaveEntrances;
+        CaveConfig.caveWater = H_XUiC_WorldGenerationWindow.CaveWater;
 
         CaveConfig.generateWater = CaveConfig.caveWater != WorldBuilder.GenerationSelections.None;
         CaveConfig.generateCaves = CaveConfig.caveNetworks != WorldBuilder.GenerationSelections.None;

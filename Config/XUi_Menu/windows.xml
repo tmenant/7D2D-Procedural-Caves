@@ -1,12 +1,6 @@
 <configs>
 
-    <remove xpath="/windows/window[@name='worldGeneration']//grid/rect[14]" />
-    <remove xpath="/windows/window[@name='worldGeneration']//grid/rect[13]" />
-    <remove xpath="/windows/window[@name='worldGeneration']//grid/rect[12]" />
-    <remove xpath="/windows/window[@name='worldGeneration']//grid/rect[11]" />
-    <remove xpath="/windows/window[@name='worldGeneration']//grid/rect[10]" />
-
-    <insertAfter xpath="/windows/window[@name='worldGeneration']//grid/rect/label[@text='Lakes']/..">
+    <insertAfter xpath="/windows/window[@name='worldGeneration']//rect[@name='scrollarea']//rwg_label[@text_key='xuiLakes']/..">
 
         <!-- separator -->
         <rect>
