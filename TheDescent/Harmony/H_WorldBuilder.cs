@@ -37,7 +37,8 @@ public class WorldBuilder_GenerateData
         worldBuilder.PrefabManager.ClearDisplayed();
         if (hasPOIs)
         {
-            worldBuilder.PrefabManager.LoadPrefabs();
+            H_PrefabManagerData.LoadPrefabs(worldBuilder.PrefabManager.prefabManagerData, caveBuilder.cavePrefabManager);
+
             worldBuilder.PrefabManager.ShufflePrefabData(worldBuilder.Seed);
             worldBuilder.PathingUtils.SetupPathingGrid();
         }
