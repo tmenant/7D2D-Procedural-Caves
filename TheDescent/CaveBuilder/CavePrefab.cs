@@ -50,7 +50,7 @@ public class CavePrefab
 
     public List<GraphNode> nodes = new List<GraphNode>();
 
-    public List<Prefab.Marker> caveMarkers = new List<Prefab.Marker>();
+    public List<PrefabVolumes.Marker> caveMarkers = new List<PrefabVolumes.Marker>();
 
     public CavePrefab() { }
 
@@ -102,9 +102,9 @@ public class CavePrefab
         }
     }
 
-    public Prefab.Marker RandomMarker(Random rand, int rotation, int xMax, int yMax, int zMax, bool aligned = true)
+    public PrefabVolumes.Marker RandomMarker(Random rand, int rotation, int xMax, int yMax, int zMax, bool aligned = true)
     {
-        var markerType = Prefab.Marker.MarkerTypes.None;
+        var markerType = PrefabVolumes.Marker.MarkerTypes.None;
         var tags = FastTags<TagGroup.Poi>.none;
         var groupName = "";
 
@@ -139,13 +139,20 @@ public class CavePrefab
         var markerStart = new Vector3i(px, py, pz);
         var markerSize = new Vector3i(sizeX, sizeY, sizeZ);
 
-        return new Prefab.Marker(markerStart, markerSize, markerType, groupName, tags);
+        return new PrefabVolumes.Marker()
+        {
+            startPos = markerStart,
+            size = markerSize,
+            MarkerType = markerType,
+            GroupName = groupName,
+            Tags = tags,
+        };
     }
 
     public void UpdateMarkers(PrefabDataInstance pdi)
     {
         nodes = new List<GraphNode>();
-        caveMarkers = new List<Prefab.Marker>();
+        caveMarkers = new List<PrefabVolumes.Marker>();
 
         foreach (var marker in pdi.prefab.RotatePOIMarkers(true, rotation))
         {
@@ -159,7 +166,7 @@ public class CavePrefab
 
     public void UpdateMarkers(Random rand, int markerCount)
     {
-        caveMarkers = new List<Prefab.Marker>();
+        caveMarkers = new List<PrefabVolumes.Marker>();
 
         var positions = new HashSet<Vector3i>();
         var addedMarkers = 0;
@@ -187,9 +194,9 @@ public class CavePrefab
 
             var marker = RandomMarker(rand, rotation, xMax, Size.y, zMax, false);
 
-            if (!positions.Contains(marker.start))
+            if (!positions.Contains(marker.startPos))
             {
-                positions.Add(marker.Start);
+                positions.Add(marker.startPos);
                 caveMarkers.Add(marker);
                 addedMarkers++;
             }
@@ -200,7 +207,7 @@ public class CavePrefab
 
     public void UpdateMarkers(Random rand)
     {
-        caveMarkers = new List<Prefab.Marker>(){
+        caveMarkers = new List<PrefabVolumes.Marker>(){
             RandomMarker(rand, 0, Size.x - 2, Size.y, 1),
             RandomMarker(rand, 1, Size.x - 2, Size.y, 1),
             RandomMarker(rand, 2, 1, Size.y, Size.z - 2),
@@ -210,7 +217,7 @@ public class CavePrefab
         UpdateMarkers(caveMarkers);
     }
 
-    public void UpdateMarkers(List<Prefab.Marker> markers)
+    public void UpdateMarkers(List<PrefabVolumes.Marker> markers)
     {
         nodes = new List<GraphNode>();
 
@@ -241,7 +248,7 @@ public class CavePrefab
         for (int i = 0; i < caveMarkers.Count; i++)
         {
             var marker = caveMarkers[i];
-            var markerPoints = CaveUtils.GetPointsInside(position + marker.start, position + marker.start + marker.size);
+            var markerPoints = CaveUtils.GetPointsInside(position + marker.startPos, position + marker.startPos + marker.size);
 
             result.UnionWith(markerPoints);
         }
@@ -263,7 +270,7 @@ public class CavePrefab
 
         foreach (var node in nodes)
         {
-            node.position = position + node.marker.Start;
+            node.position = position + node.marker.startPos;
         }
     }
 
@@ -371,7 +378,7 @@ public class CavePrefab
 
         foreach (var marker in caveMarkers)
         {
-            var start = position + marker.start;
+            var start = position + marker.startPos;
 
             if (CaveUtils.Intersect3D(x, y, z, start, marker.size))
             {

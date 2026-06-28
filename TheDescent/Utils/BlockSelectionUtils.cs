@@ -46,15 +46,16 @@ public class BlockSelectionUtils
 
     public static SelectionCategory GetSelectionCategory()
     {
+        var selectionBoxCategory = "BlockSelectionUtils";
         var sbm = SelectionBoxManager.Instance;
 
         if (!sbm.categories.ContainsKey(selectionBoxCategory))
         {
             sbm.CreateCategory(
                 _name: selectionBoxCategory,
-                _colSelected: SelectionBoxManager.ColSelectionActive,
-                _colUnselected: SelectionBoxManager.ColSelectionInactive,
-                _colFaceSelected: SelectionBoxManager.ColSelectionFaceSel,
+                _colSelected: new UnityEngine.Color(0f, 0f, 1f, 0.5f),
+                _colUnselected: new UnityEngine.Color(0f, 0f, 1f, 0.5f),
+                _colFaceSelected: new UnityEngine.Color(1f, 1f, 0f, 0.4f),
                 _bCollider: false,
                 _tag: null
             );
@@ -99,11 +100,14 @@ public class BlockSelectionUtils
         return BlockToolSelection.Instance.m_selectionStartPoint;
     }
 
-    public static Prefab.Marker GetSelectedMarker()
+    public static PrefabVolumes.Marker GetSelectedMarker()
     {
-        if (POIMarkerToolManager.currentSelectionBox != null && POIMarkerToolManager.currentSelectionBox.UserData is Prefab.Marker marker)
+        foreach (var selectionBox in SelectionBoxManager.Instance.CategoryPOIMarker.boxes.Values)
         {
-            return marker;
+            if (selectionBox.UserData is PrefabVolumes.Marker marker && marker.MarkerType == PrefabVolumes.Marker.MarkerTypes.POISpawn)
+            {
+                return marker;
+            }
         }
 
         return null;

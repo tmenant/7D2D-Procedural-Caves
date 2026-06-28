@@ -1,7 +1,11 @@
+using System.Collections.Generic;
 using System.Linq;
+using PrefabVolumes;
 
 public class CavePrefabChecker
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CavePrefabChecker>();
+
     public static bool IsValid(PrefabData prefabData)
     {
         var result = true;
@@ -35,7 +39,7 @@ public class CavePrefabChecker
 
     private static bool HasOverlappingMarkers(PrefabData prefab)
     {
-        var markers = prefab.POIMarkers
+        var markers = prefab.POIMarkers.AsIterator()
             .Where(marker => marker.tags.Test_AnySet(CaveTags.tagCaveMarker))
             .ToList();
 
@@ -63,7 +67,7 @@ public class CavePrefabChecker
 
     private static bool ContainsCaveMarkers(PrefabData prefab)
     {
-        foreach (var marker in prefab.POIMarkers)
+        foreach (var marker in prefab.POIMarkers.AsIterator())
         {
             if (marker.tags.Test_AnySet(CaveTags.tagCaveMarker))
             {
@@ -76,17 +80,17 @@ public class CavePrefabChecker
 
     private static bool PrefabMarkersAreValid(PrefabData prefab)
     {
-        foreach (var marker in prefab.POIMarkers)
+        foreach (var marker in prefab.POIMarkers.AsIterator())
         {
             if (!marker.tags.Test_AnySet(CaveTags.tagCaveMarker))
                 continue;
 
-            bool isOnBound_x = marker.start.x == -1 || marker.start.x == prefab.size.x;
-            bool isOnBound_z = marker.start.z == -1 || marker.start.z == prefab.size.z;
+            bool isOnBound_x = marker.startPos.x == -1 || marker.startPos.x == prefab.size.x;
+            bool isOnBound_z = marker.startPos.z == -1 || marker.startPos.z == prefab.size.z;
 
             if (!isOnBound_x && !isOnBound_z)
             {
-                Logging.Warning($"cave marker out of bounds: [{marker.start}] '{prefab.Name}'");
+                Logging.Warning($"cave marker out of bounds: [{marker.startPos}] '{prefab.Name}'");
                 return false;
             }
 

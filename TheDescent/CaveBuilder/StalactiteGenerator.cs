@@ -33,7 +33,7 @@ public static class StalactiteGenerator
         var primaryPlayer = GameManager.Instance.World.GetPrimaryPlayer();
 
         Block block = blockValue.Block;
-        BlockPlacement.Result _bpResult = new BlockPlacement.Result(0, Vector3.zero, Vector3i.zero, blockValue);
+        BlockPlacement.Result _bpResult = new BlockPlacement.Result();
         block.OnBlockPlaceBefore(GameManager.Instance.World, ref _bpResult, primaryPlayer, GameManager.Instance.World.GetGameRandom());
         blockValue = _bpResult.blockValue;
 

@@ -4,31 +4,32 @@ public class BlockCaveTerrain : Block
 {
     private static Dictionary<int, BlockValue> blockReplacements;
 
-    public override DestroyedResult OnBlockDestroyedBy(WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _blockValue, int _entityId, bool _bUseHarvestTool)
+    public override DestroyedResult OnBlockDestroyedBy(WorldBase _world, BlockValueRef _bvRef, BlockValue _blockValue, int _entityId, bool _bUseHarvestTool)
     {
-        UpdateNeighbors(_clrIdx, _blockPos);
+        UpdateNeighbors(_bvRef);
         return DestroyedResult.Remove;
     }
 
-    public override DestroyedResult OnBlockDestroyedByExplosion(WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _blockValue, int _playerThatStartedExpl)
+    public override DestroyedResult OnBlockDestroyedByExplosion(WorldBase _world, BlockValueRef _bvRef, BlockValue _blockValue, int _playerThatStartedExpl)
     {
-        UpdateNeighbors(_clrIdx, _blockPos);
-        return base.OnBlockDestroyedByExplosion(_world, _clrIdx, _blockPos, _blockValue, _playerThatStartedExpl);
+        UpdateNeighbors(_bvRef);
+        return base.OnBlockDestroyedByExplosion(_world, _bvRef, _blockValue, _playerThatStartedExpl);
     }
 
-    private void UpdateNeighbors(int _clrIdx, Vector3i _blockPos)
+    private void UpdateNeighbors(BlockValueRef bvRef)
     {
         var blockChangeInfos = new List<BlockChangeInfo>();
         var neighborPos = new Vector3i();
         var world = GameManager.Instance.World;
+        var blockPos = bvRef.BlockPosition;
 
-        blockChangeInfos.Add(new BlockChangeInfo(_clrIdx, _blockPos, CaveBlocks.caveAir));
+        blockChangeInfos.Add(new BlockChangeInfo(bvRef, CaveBlocks.caveAir));
 
         foreach (var offset in BFSUtils.offsets)
         {
-            neighborPos.x = _blockPos.x + offset.x;
-            neighborPos.y = _blockPos.y + offset.y;
-            neighborPos.z = _blockPos.z + offset.z;
+            neighborPos.x = blockPos.x + offset.x;
+            neighborPos.y = blockPos.y + offset.y;
+            neighborPos.z = blockPos.z + offset.z;
 
             var neighbor = world.GetBlock(neighborPos);
 
@@ -44,7 +45,7 @@ public class BlockCaveTerrain : Block
                 continue;
             }
 
-            blockChangeInfos.Add(new BlockChangeInfo(_clrIdx, neighborPos, blockValue));
+            blockChangeInfos.Add(new BlockChangeInfo(neighborPos, blockValue));
         }
 
         world.SetBlocksRPC(blockChangeInfos);

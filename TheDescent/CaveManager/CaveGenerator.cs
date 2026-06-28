@@ -19,7 +19,7 @@ public class CaveGenerator
     public static void Init()
     {
         string worldName = GamePrefs.GetString(EnumGamePrefs.GameWorld);
-        string caveMapDir = $"{GameIO.GetWorldDir(worldName)}/cavemap";
+        string caveMapDir = CaveUtils.GetCaveMapPath(worldName);
 
         if (Directory.Exists(caveMapDir))
         {
@@ -39,7 +39,7 @@ public class CaveGenerator
 
     private static int GetWorldSize(string worldName)
     {
-        string path = $"{GameIO.GetWorldDir(worldName)}/map_info.xml";
+        string path = $"{CaveUtils.GetWorldPath(worldName)}/map_info.xml";
 
         var xmlDoc = new XmlDocument();
         xmlDoc.Load(path);

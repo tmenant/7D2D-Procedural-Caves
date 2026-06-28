@@ -6,50 +6,67 @@ using UnityEngine;
 [HarmonyPatch(typeof(ItemActionPlaceAsBlock), "ExecuteAction")]
 public class ItemActionPlaceAsBlock_ExecuteAction
 {
-    public static void Prefix(ItemActionPlaceAsBlock __instance, ItemActionData _actionData, bool _bReleased)
+    public static bool Prefix(ItemActionPlaceAsBlock __instance, ItemActionData _actionData, bool _bReleased)
     {
         if (!_bReleased || Time.time - _actionData.lastUseTime < __instance.Delay || Time.time - _actionData.lastUseTime < Constants.cBuildIntervall)
         {
-            return;
+            return false;
         }
         EntityAlive holdingEntity = _actionData.invData.holdingEntity;
         if (EffectManager.GetValue(PassiveEffects.DisableItem, holdingEntity.inventory.holdingItemItemValue, 0f, holdingEntity, null, _actionData.invData.item.ItemTags) > 0f)
         {
             _actionData.lastUseTime = Time.time + 1f;
             Manager.PlayInsidePlayerHead("twitch_no_attack");
-            return;
+            return false;
         }
         ItemInventoryData invData = _actionData.invData;
-        Vector3i lastBlockPos = invData.hitInfo.lastBlockPos;
-        if (!invData.hitInfo.bHitValid || lastBlockPos == Vector3i.zero || invData.hitInfo.tag.StartsWith("E_"))
+        WorldRayHitInfo hitInfo = ((EntityPlayerLocal)invData.holdingEntity).HitInfo;
+        Vector3i lastBlockPos = hitInfo.lastBlockPos;
+        if (!hitInfo.bHitValid || lastBlockPos == Vector3i.zero || hitInfo.tag.StartsWith("E_"))
         {
-            return;
+            return false;
         }
         BlockValue block = invData.world.GetBlock(lastBlockPos);
 
-        // -------------------------------------------------------------
         // NOTE: Patch this condition to allow any item replacing caveAir
         bool isAir = block.isair || block.type == CaveBlocks.caveAir.type;
         if (!isAir || (!invData.world.IsEditor() && GameUtils.IsColliderWithinBlock(lastBlockPos, block)))
         {
-            return;
+            return false;
         }
         // -------------------------------------------------------------
 
         BlockValue blockValue = invData.item.OnConvertToBlockValue(invData.itemValue, __instance.blockToPlace);
-        WorldRayHitInfo worldRayHitInfo = invData.hitInfo.Clone();
-        worldRayHitInfo.hit.blockPos = lastBlockPos;
+        hitInfo.hit.blockPos = lastBlockPos;
         int placementDistanceSq = blockValue.Block.GetPlacementDistanceSq();
-        if (invData.hitInfo.hit.distanceSq > placementDistanceSq)
+        if (hitInfo.hit.distanceSq > placementDistanceSq)
         {
-            return;
+            return false;
         }
-        if (!blockValue.Block.CanPlaceBlockAt(invData.world, worldRayHitInfo.hit.clrIdx, lastBlockPos, blockValue))
+        if (!blockValue.Block.CanPlaceBlockAt(invData.world, lastBlockPos, blockValue))
         {
             GameManager.ShowTooltip(invData.holdingEntity as EntityPlayerLocal, "blockCantPlaced");
-            return;
+            return false;
         }
-        BlockPlacement.Result _bpResult = blockValue.Block.BlockPlacementHelper.OnPlaceBlock(BlockPlacement.EnumRotationMode.Auto, 0, invData.world, blockValue, worldRayHitInfo.hit, invData.holdingEntity.position);
+        BlockPlacement.EnumPlacement placement;
+        BlockPlacement.EnumRotationMode mode;
+        int localRot;
+        PropTransform propTransform;
+        if (invData is ItemClassBlock.ItemBlockInventoryData itemBlockInventoryData)
+        {
+            placement = itemBlockInventoryData.Placement;
+            mode = itemBlockInventoryData.mode;
+            localRot = itemBlockInventoryData.localRot;
+            propTransform = itemBlockInventoryData.propTransform;
+        }
+        else
+        {
+            placement = BlockPlacement.EnumPlacement.Voxel;
+            mode = BlockPlacement.EnumRotationMode.Auto;
+            localRot = 0;
+            propTransform = PropTransform.identity;
+        }
+        BlockPlacement.Result _bpResult = blockValue.Block.BlockPlacementHelper.OnPlaceBlock(placement, mode, localRot, invData.world, blockValue, propTransform, hitInfo.hit, invData.holdingEntity.position);
         blockValue.Block.OnBlockPlaceBefore(invData.world, ref _bpResult, invData.holdingEntity, invData.world.GetGameRandom());
         blockValue = _bpResult.blockValue;
         if (blockValue.Block.IndexName == "lpblock")
@@ -57,14 +74,14 @@ public class ItemActionPlaceAsBlock_ExecuteAction
             if (!invData.world.CanPlaceLandProtectionBlockAt(_bpResult.blockPos, invData.world.gameManager.GetPersistentLocalPlayer()))
             {
                 invData.holdingEntity.PlayOneShot("keystone_build_warning");
-                return;
+                return false;
             }
             invData.holdingEntity.PlayOneShot("keystone_placed");
         }
         else if (!invData.world.CanPlaceBlockAt(_bpResult.blockPos, invData.world.gameManager.GetPersistentLocalPlayer()))
         {
             invData.holdingEntity.PlayOneShot("keystone_build_warning");
-            return;
+            return false;
         }
         _actionData.lastUseTime = Time.time;
         blockValue.Block.PlaceBlock(invData.world, _bpResult, invData.holdingEntity);
@@ -88,5 +105,7 @@ public class ItemActionPlaceAsBlock_ExecuteAction
         }
         invData.holdingEntity.PlayOneShot((__instance.soundStart != null) ? __instance.soundStart : "placeblock");
         (invData.holdingEntity as EntityPlayerLocal).DropTimeDelay = 0.5f;
+        return false;
     }
+
 }

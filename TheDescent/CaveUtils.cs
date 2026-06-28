@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -160,13 +161,13 @@ public static class CaveUtils
         if (prefabInstance == null)
             yield break;
 
-        var markers = prefabInstance.prefab.POIMarkers
+        var markers = prefabInstance.prefab.GetPOIMarkers()
             .Where(m => m.tags.Test_AnySet(CaveTags.tagCaveMarker))
             .ToArray();
 
         foreach (var marker in markers)
         {
-            yield return new BoundingBox(marker.start + prefabInstance.boundingBoxPosition, marker.size);
+            yield return new BoundingBox(marker.startPos + prefabInstance.boundingBoxPosition, marker.size);
         }
     }
 
@@ -213,5 +214,20 @@ public static class CaveUtils
         int dz = FastMax(min.z - point.z, 0, point.z - max.z);
 
         return dx * dx + dy * dy + dz * dz;
+    }
+
+    public static string GetWorldDir()
+    {
+        return PathAbstractions.WorldsSearchPaths.GetLocation(GamePrefs.GetString(EnumGamePrefs.GameWorld)).FullPath;
+    }
+
+    public static string GetWorldPath(string worldName)
+    {
+        return PathAbstractions.WorldsSearchPaths.GetLocation(worldName).FullPath;
+    }
+
+    public static string GetCaveMapPath(string worldName)
+    {
+        return Path.Combine(GetWorldPath(worldName), "cavemap");
     }
 }

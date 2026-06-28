@@ -16,20 +16,21 @@ public static class QuestEventManager_SetupTraderPrefabList
         }
 
         Vector3 a = area.Position.ToVector3();
-        List<PrefabInstance> pOIPrefabs = GameManager.Instance.GetDynamicPrefabDecorator().GetPOIPrefabs();
-        List<QuestEventManager.PrefabListData> list = new List<QuestEventManager.PrefabListData>();
+        List<PrefabInstance> prefabInstances = new List<PrefabInstance>();
+        GameManager.Instance.GetDynamicPrefabDecorator().GetPOIPrefabs(prefabInstances);
+        List<QuestEventManager.PrefabListData> prefabData = new List<QuestEventManager.PrefabListData>();
 
-        var prefabListData = new QuestEventManager.PrefabListData();
+        var prefabListData1 = new QuestEventManager.PrefabListData();
         var prefabListData2 = new QuestEventManager.PrefabListData();
         var prefabListData3 = new QuestEventManager.PrefabListData();
 
-        list.Add(prefabListData);
-        list.Add(prefabListData2);
-        list.Add(prefabListData3);
+        prefabData.Add(prefabListData1);
+        prefabData.Add(prefabListData2);
+        prefabData.Add(prefabListData3);
 
-        for (int i = 0; i < pOIPrefabs.Count; i++)
+        for (int i = 0; i < prefabInstances.Count; i++)
         {
-            var prefabInstance = pOIPrefabs[i];
+            var prefabInstance = prefabInstances[i];
             var distance = Vector3.Distance(a, prefabInstance.boundingBoxPosition);
 
             if (prefabInstance.prefab.tags.Test_AnySet(CaveTags.tagUnderground))
@@ -40,20 +41,19 @@ public static class QuestEventManager_SetupTraderPrefabList
 
             if (distance <= 500f)
             {
-                prefabListData.AddPOI(prefabInstance);
+                prefabListData1.AddPOI(prefabInstances[i]);
             }
             else if (distance <= 1500f)
             {
-                prefabListData2.AddPOI(prefabInstance);
+                prefabListData2.AddPOI(prefabInstances[i]);
             }
             else
             {
-                prefabListData3.AddPOI(prefabInstance);
+                prefabListData3.AddPOI(prefabInstances[i]);
             }
         }
 
-        __instance.TraderPrefabList.Add(area, list);
-
+        __instance.TraderPrefabList.Add(area, prefabData);
         return false;
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using PrefabVolumes;
 using UnityEngine;
 using Path = System.IO.Path;
 
@@ -68,8 +69,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
     public static PrefabInstance GetCurrentPrefab()
     {
-        var prefabInstanceId = PrefabEditModeManager.Instance.prefabInstanceId;
-        return PrefabSleeperVolumeManager.Instance.GetPrefabInstance(prefabInstanceId);
+        return PrefabInstanceClientManager.instance.GetPrefabInstance(PrefabEditModeManager.Instance.prefabInstanceId);
     }
 
     public static BlockValue? GetSelectedBlock(bool allowAir = false)
@@ -113,8 +113,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
             return;
         }
 
-        var prefabInstanceId = PrefabEditModeManager.Instance.prefabInstanceId;
-        PrefabInstance prefabInstance = PrefabSleeperVolumeManager.Instance.GetPrefabInstance(prefabInstanceId);
+        PrefabInstance prefabInstance = GetCurrentPrefab();
 
         if (prefabInstance == null)
         {
@@ -139,24 +138,33 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
         var startPoint = selection.SelectionMin;
         var start = startPoint - prefabInstance.boundingBoxPosition;
 
-        prefabInstance.prefab.AddNewPOIMarker(
-            _prefabInstanceName: prefabInstance.name,
-            bbPos: prefabInstance.boundingBoxPosition,
-            _start: start,
-            _size: size,
-            _group: "cave",
-            _tags: CaveTags.tagCaveMarker,
-            _type: Prefab.Marker.MarkerTypes.None,
-            isSelected: false
-        );
+        // prefabInstance.prefab.AddNewPOIMarker(
+        //     _prefabInstanceName: prefabInstance.name,
+        //     bbPos: prefabInstance.boundingBoxPosition,
+        //     _start: start,
+        //     _size: size,
+        //     _group: "cave",
+        //     _tags: CaveTags.tagCaveMarker,
+        //     _type: PrefabVolumes.Marker.MarkerTypes.None,
+        //     isSelected: false
+        // );
 
-        var marker = BlockSelectionUtils.GetSelectedMarker();
+        // var marker = BlockSelectionUtils.GetSelectedMarker();
 
-        marker.rotations = markerDirectionsMapping[direction];
+        // marker.rotations = markerDirectionsMapping[direction];
 
-        PrefabEditModeManager.Instance.NeedsSaving = true;
-        SelectionBoxManager.Instance.SetFacingDirection("POIMarker", marker.name, marker.rotations * -90);
-        SelectionBoxManager.Instance.Deactivate();
+        // PrefabEditModeManager.Instance.NeedsSaving = true;
+        // SelectionBoxManager.Instance.SetFacingDirection("POIMarker", marker.name, marker.rotations * -90);
+        // SelectionBoxManager.Instance.Deactivate();
+
+        // var volume = prefabInstance.prefab.MarkerVolumeList.AddNewVolume(
+        //     prefabInstance.name,
+        //     prefabInstance.boundingBoxPosition,
+        //     start,
+        //     size
+        // );
+
+        throw new NotImplementedException();
     }
 
     private void ReplaceTerrainCommand()
@@ -171,28 +179,20 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
             return;
         }
 
-        Block block = blockValue.Block;
-        BlockPlacement.Result _bpResult = new BlockPlacement.Result(0, Vector3.zero, Vector3i.zero, blockValue);
-        block.OnBlockPlaceBefore(GameManager.Instance.World, ref _bpResult, primaryPlayer, GameManager.Instance.World.GetGameRandom());
-        blockValue = _bpResult.blockValue;
-
         List<BlockChangeInfo> list = new List<BlockChangeInfo>();
-
-        var _gm = GameManager.Instance;
 
         foreach (var position in BlockSelectionUtils.BrowseSelectionPositions())
         {
-            var worldBlock = _gm.World.GetBlock(position);
-            var clusterIndex = _gm.World.ChunkCache.ClusterIdx;
-            var _density = _gm.World.GetDensity(clusterIndex, position);
+            var worldBlock = GameManager.Instance.World.GetBlock(position);
+            var density = GameManager.Instance.World.GetDensity(position);
 
-            BlockChangeInfo blockChangeInfo = new BlockChangeInfo(position, blockValue, _density);
+            BlockChangeInfo blockChangeInfo = new BlockChangeInfo(position, blockValue, density);
 
             if (worldBlock.Block.shape.IsTerrain())
                 list.Add(blockChangeInfo);
         }
 
-        _gm.SetBlocksRPC(list);
+        GameManager.Instance.SetBlocksRPC(list);
     }
 
     private void ReplaceGroundCommand()
@@ -207,29 +207,21 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
             return;
         }
 
-        Block block = blockValue.Block;
-        BlockPlacement.Result _bpResult = new BlockPlacement.Result(0, Vector3.zero, Vector3i.zero, blockValue);
-        block.OnBlockPlaceBefore(GameManager.Instance.World, ref _bpResult, primaryPlayer, GameManager.Instance.World.GetGameRandom());
-        blockValue = _bpResult.blockValue;
-
         List<BlockChangeInfo> list = new List<BlockChangeInfo>();
-
-        var _gm = GameManager.Instance;
 
         foreach (var position in BlockSelectionUtils.BrowseSelectionPositions())
         {
-            var worldBlock = _gm.World.GetBlock(position);
-            var upperBlock = _gm.World.GetBlock(position + Vector3i.up);
-            var clusterIndex = _gm.World.ChunkCache.ClusterIdx;
-            var _density = _gm.World.GetDensity(clusterIndex, position);
-
-            BlockChangeInfo blockChangeInfo = new BlockChangeInfo(position, blockValue, _density);
+            var worldBlock = GameManager.Instance.World.GetBlock(position);
+            var upperBlock = GameManager.Instance.World.GetBlock(position + Vector3i.up);
+            var density = GameManager.Instance.World.GetDensity(position);
 
             if (worldBlock.Block.shape.IsTerrain() && upperBlock.isair)
-                list.Add(blockChangeInfo);
+            {
+                list.Add(new BlockChangeInfo(position, blockValue, density));
+            }
         }
 
-        _gm.SetBlocksRPC(list);
+        GameManager.Instance.SetBlocksRPC(list);
     }
 
     private void SetWaterCommand(List<string> args)
@@ -263,8 +255,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
         PrefabEditModeManager.Instance.updatePrefabBounds();
 
         var selection = BlockToolSelection.Instance;
-        var prefabInstanceId = PrefabEditModeManager.Instance.prefabInstanceId;
-        var prefabInstance = PrefabSleeperVolumeManager.Instance.GetPrefabInstance(prefabInstanceId);
+        var prefabInstance = GetCurrentPrefab();
 
         var bbPos = prefabInstance.boundingBoxPosition;
         var bbSize = prefabInstance.boundingBoxSize;
@@ -295,10 +286,10 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
             return;
         }
 
-        Block block = blockValue.Block;
-        BlockPlacement.Result _bpResult = new BlockPlacement.Result(0, Vector3.zero, Vector3i.zero, blockValue);
-        block.OnBlockPlaceBefore(GameManager.Instance.World, ref _bpResult, primaryPlayer, GameManager.Instance.World.GetGameRandom());
-        blockValue = _bpResult.blockValue;
+        // Block block = blockValue.Block;
+        // BlockPlacement.Result _bpResult = new BlockPlacement.Result(0, Vector3.zero, Vector3i.zero, blockValue);
+        // block.OnBlockPlaceBefore(GameManager.Instance.World, ref _bpResult, primaryPlayer, GameManager.Instance.World.GetGameRandom());
+        // blockValue = _bpResult.blockValue;
 
         var _density = blockValue.Block.shape.IsTerrain() ? MarchingCubes.DensityTerrain : MarchingCubes.DensityAir;
         var start = selection.m_selectionStartPoint;
@@ -383,7 +374,6 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
         prefabInstance.prefab.editorGroups.Add("cave");
         prefabInstance.prefab.Tags = CaveTags.tagCave;
-        // prefabInstance.prefab.editorGroups.Add(playername);
     }
 
     private void TagsCommand(List<string> args)
@@ -458,10 +448,10 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
             return;
         }
 
-        Block block = blockValue.Block;
-        BlockPlacement.Result _bpResult = new BlockPlacement.Result(0, Vector3.zero, Vector3i.zero, blockValue);
-        block.OnBlockPlaceBefore(GameManager.Instance.World, ref _bpResult, primaryPlayer, GameManager.Instance.World.GetGameRandom());
-        blockValue = _bpResult.blockValue;
+        // Block block = blockValue.Block;
+        // BlockPlacement.Result _bpResult = new BlockPlacement.Result(0, Vector3.zero, Vector3i.zero, blockValue);
+        // block.OnBlockPlaceBefore(GameManager.Instance.World, ref _bpResult, primaryPlayer, GameManager.Instance.World.GetGameRandom());
+        // blockValue = _bpResult.blockValue;
 
         List<BlockChangeInfo> list = new List<BlockChangeInfo>();
 
@@ -473,9 +463,6 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
             if (worldBlock.isWater || worldBlock.isair)
                 continue;
-
-            var clusterIndex = _gm.World.ChunkCache.ClusterIdx;
-            var _density = _gm.World.GetDensity(clusterIndex, position);
 
             BlockChangeInfo blockChangeInfo = new BlockChangeInfo(position, blockValue, MarchingCubes.DensityTerrain);
 
@@ -571,11 +558,11 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
             return;
         }
 
-        marker.rotations = markerDirectionsMapping[direction];
-        SelectionBoxManager.Instance.SetFacingDirection("POIMarker", marker.name, marker.rotations * -90);
-        PrefabEditModeManager.Instance.NeedsSaving = true;
+        // marker.rotations = markerDirectionsMapping[direction];
+        // SelectionBoxManager.Instance.SetFacingDirection("POIMarker", marker.name, marker.rotations * -90);
+        // PrefabEditModeManager.Instance.NeedsSaving = true;
 
-        logger.Info("set marker direction!");
+        throw new NotImplementedException();
     }
 
     public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)

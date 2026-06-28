@@ -35,7 +35,7 @@ public class ActionCollapseTerrain : BaseAction
         var positionsToDestroy = new HashSet<Vector3i>();
         var random = new Random();
 
-        if (GameManager.Instance.World.GetPOIAtPosition(playerPos, false) != null)
+        if (GameManager.Instance.World.GetPOIAtPosition(playerPos) != null)
         {
             return false;
         }

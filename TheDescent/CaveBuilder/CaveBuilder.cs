@@ -93,17 +93,17 @@ public class CaveBuilder
         }
     }
 
-    public IEnumerator GenerateCaveMap()
+    public void GenerateCaveMap()
     {
         if (worldBuilder.IsCanceled)
-            yield break;
+            return;
 
         var timer = ProfilingUtils.StartTimer();
         var memoryBefore = GC.GetTotalMemory(true);
 
         caveEntrancesPlanner.SpawnNaturalEntrances(worldBuilder);
 
-        yield return worldBuilder.SetMessage("Spawning cave prefabs...", _logToConsole: true);
+        worldBuilder.SetTaskMessage("Spawning cave prefabs...");
 
         Random random = new Random(worldBuilder.Seed + worldSize);
 
@@ -111,13 +111,13 @@ public class CaveBuilder
         cavePrefabManager.SpawnUnderGroundPrefabs(worldSize / 5, random, heightMap);
         cavePrefabManager.SpawnCaveRooms(1000, random, heightMap);
 
-        yield return worldBuilder.SetMessage("Culterize surface prefabs...", _logToConsole: true);
+        worldBuilder.SetTaskMessage("Culterize surface prefabs...");
 
         cavePrefabManager.AddSurfacePrefabs(PrefabManager.UsedPrefabsWorld);
 
         logger.Debug($"Prefab timer: {timer.ElapsedMilliseconds / 1000:F1}s");
 
-        yield return worldBuilder.SetMessage("Setup cave network...", _logToConsole: true);
+        worldBuilder.SetTaskMessage("Setup cave network...");
 
         var caveGraph = new Graph(cavePrefabManager.Prefabs, worldSize);
         var subLists = CaveUtils.SplitList(caveGraph.Edges.ToList(), 6);
@@ -127,7 +127,7 @@ public class CaveBuilder
 
         logger.Debug($"Graph timer: {timer.ElapsedMilliseconds / 1000:F1}ms");
 
-        yield return worldBuilder.SetMessage("Start tunneling threads...", _logToConsole: true);
+        worldBuilder.SetTaskMessage("Start tunneling threads...");
 
         var threads = new List<Thread>() {
             StartRoomsThread(cavePrefabManager),
@@ -179,7 +179,7 @@ public class CaveBuilder
 
             if (isThreadAlive)
             {
-                yield return worldBuilder.SetMessage($"Cave tunneling {100f * cavemap.TunnelsCount / caveGraph.Edges.Count:F0}%");
+                worldBuilder.SetTaskMessage($"Cave tunneling {100f * cavemap.TunnelsCount / caveGraph.Edges.Count:F0}%");
             }
             else
             {
@@ -187,18 +187,16 @@ public class CaveBuilder
             }
         }
 
-        yield return cavemap.SetWaterCoroutine(cavePrefabManager, worldBuilder, localMinimas);
+        cavemap.SetWaterCoroutine(cavePrefabManager, worldBuilder, localMinimas);
 
         if (worldBuilder.IsCanceled)
-            yield break;
+            return;
 
         SpawnNaturalEntrances();
 
         // yield return GenerateCavePreview(cavemap);
 
         logger.Info($"{cavemap.BlocksCount:N0} cave blocks generated, timer: {timer.ElapsedMilliseconds / 1000:F1}s, memory used: {(GC.GetTotalMemory(true) - memoryBefore) / 1_048_576:N1}MB");
-
-        yield break;
     }
 
     public IEnumerator GenerateCaveFromWorld(WorldDatas worldDatas)

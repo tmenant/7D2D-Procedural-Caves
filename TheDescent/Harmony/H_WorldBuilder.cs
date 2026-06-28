@@ -4,14 +4,14 @@ using Unity.Collections;
 using WorldGenerationEngineFinal;
 
 
-[HarmonyPatch(typeof(WorldBuilder), "GenerateData")]
-public static class WorldBuilder_GenerateData
+[HarmonyPatch(typeof(WorldBuilder), "GenerateTask")]
+public class WorldBuilder_GenerateData
 {
     private static WorldBuilder worldBuilder;
 
     private static CaveBuilder caveBuilder;
 
-    public static bool Prefix(WorldBuilder __instance, ref IEnumerator __result)
+    public static bool Prefix(WorldBuilder __instance)
     {
         if (!CaveConfig.generateCaves)
         {
@@ -22,89 +22,76 @@ public static class WorldBuilder_GenerateData
 
         CaveUtils.Assert(worldBuilder != null, "null world builder");
 
-        Logging.Info("Patch rand world generator!");
-        __result = GenerateData();
+        GenerateTask();
         return false;
     }
 
-    public static IEnumerator GenerateData()
+    public static void GenerateTask()
     {
         PatchWaterHeight();
 
-        yield return worldBuilder.Init();
-        yield return worldBuilder.SetMessage(string.Format(Localization.Get("xuiWorldGenerationGenerating"), worldBuilder.WorldName), _logToConsole: true);
-        yield return worldBuilder.GenerateTerrain();
-
-        if (worldBuilder.IsCanceled)
-            yield break;
-
-        worldBuilder.InitStreetTiles();
-
         caveBuilder = new CaveBuilder(worldBuilder);
 
-        if (worldBuilder.IsCanceled)
-            yield break;
-
-        bool hasPOIs = worldBuilder.Towns != 0 || worldBuilder.Wilderness != WorldBuilder.GenerationSelections.None;
+        worldBuilder.GenerateTerrain();
+        bool hasPOIs = worldBuilder.Towns != WorldBuilder.GenerationSelections.None || worldBuilder.Wilderness != WorldBuilder.GenerationSelections.None;
+        worldBuilder.PrefabManager.ClearDisplayed();
         if (hasPOIs)
         {
-            yield return H_PrefabManager.LoadPrefabs(worldBuilder.PrefabManager, caveBuilder.cavePrefabManager);
+            worldBuilder.PrefabManager.LoadPrefabs();
             worldBuilder.PrefabManager.ShufflePrefabData(worldBuilder.Seed);
-            yield return null;
             worldBuilder.PathingUtils.SetupPathingGrid();
-        }
-        else
-        {
-            worldBuilder.PrefabManager.ClearDisplayed();
         }
 
         StoreHeightMaps(out var HeightMap, out var waterDest);
         PatchHeightMaps();
 
-        if (worldBuilder.Towns != 0)
+        worldBuilder.InitStreetTiles();
+        if (worldBuilder.Towns != WorldBuilder.GenerationSelections.None)
         {
-            yield return worldBuilder.TownPlanner.Plan(worldBuilder.thisWorldProperties, worldBuilder.Seed);
+            worldBuilder.TownPlanner.Plan(worldBuilder.thisWorldProperties, worldBuilder.Seed);
         }
 
         ResetHeightMaps(HeightMap, waterDest);
 
-        yield return worldBuilder.GenerateTerrainLast();
+        worldBuilder.GenerateTerrainLast();
 
         PatchHeightMaps();
 
+        worldBuilder.previewStepOfTask = XUiC_WorldGenerationPreview.PreviewStep.Terrain;
+        worldBuilder.POISmoother.SmoothStreetTiles();
         if (worldBuilder.IsCanceled)
-            yield break;
-
-        yield return worldBuilder.POISmoother.SmoothStreetTiles();
-
-        if (worldBuilder.IsCanceled)
-            yield break;
-
-        if (worldBuilder.Wilderness != 0)
         {
-            yield return worldBuilder.WildernessPlanner.Plan(worldBuilder.thisWorldProperties, worldBuilder.Seed);
-            yield return worldBuilder.SmoothWildernessTerrain();
-
-            if (worldBuilder.IsCanceled)
-            {
-                yield break;
-            }
+            return;
         }
+
+        if (worldBuilder.Wilderness != WorldBuilder.GenerationSelections.None)
+        {
+            worldBuilder.WildernessPlanner.Plan(worldBuilder.thisWorldProperties, worldBuilder.Seed);
+            worldBuilder.SmoothWildernessTerrain();
+        }
+
+        if (worldBuilder.IsCanceled)
+        {
+            return;
+        }
+
         if (hasPOIs)
         {
             worldBuilder.CalcTownshipsHeightMask();
-            yield return worldBuilder.HighwayPlanner.Plan(worldBuilder.thisWorldProperties, worldBuilder.Seed);
-            yield return worldBuilder.TownPlanner.SpawnPrefabs();
-            if (worldBuilder.IsCanceled)
-            {
-                yield break;
-            }
+            worldBuilder.HighwayPlanner.Plan(worldBuilder.thisWorldProperties, worldBuilder.Seed);
+            worldBuilder.TownPlanner.SpawnPrefabs();
         }
 
-        if (worldBuilder.Wilderness != 0)
+        if (worldBuilder.IsCanceled)
         {
-            yield return worldBuilder.WildernessPathPlanner.Plan(worldBuilder.Seed);
+            return;
         }
+
+        if (worldBuilder.Wilderness != WorldBuilder.GenerationSelections.None)
+        {
+            worldBuilder.WildernessPathPlanner.Plan(worldBuilder.Seed);
+        }
+
         int num = 12 - worldBuilder.playerSpawns.Count;
         if (num > 0)
         {
@@ -117,39 +104,34 @@ public static class WorldBuilder_GenerateData
             }
         }
 
-        yield return GCUtils.UnloadAndCollectCo();
-        yield return worldBuilder.SetMessage(Localization.Get("xuiRwgDrawRoads"), _logToConsole: true);
-        yield return worldBuilder.DrawRoads(worldBuilder.roadDest);
-
-        if (hasPOIs)
+        if (worldBuilder.IsCanceled)
         {
-            yield return worldBuilder.SetMessage(Localization.Get("xuiRwgSmoothRoadTerrain"), _logToConsole: true);
-            worldBuilder.CalcWindernessPOIsHeightMask(worldBuilder.roadDest);
-            yield return worldBuilder.SmoothRoadTerrain(worldBuilder.roadDest, HeightMap, worldBuilder.WorldSize, worldBuilder.Townships);
+            return;
         }
 
-        yield return caveBuilder.GenerateCaveMap();
+        worldBuilder.DrawRoads(worldBuilder.roadDest);
+        if (hasPOIs)
+        {
+            worldBuilder.SetTaskMessage(worldBuilder.messageSmoothRoadTerrain);
+            worldBuilder.CalcWindernessPOIsHeightMask(worldBuilder.roadDest);
+            worldBuilder.SmoothRoadTerrain(worldBuilder.roadDest, worldBuilder.data.HeightMap, worldBuilder.WorldSize, worldBuilder.Townships);
+        }
+
+        caveBuilder.GenerateCaveMap();
 
         foreach (Path highwayPath in worldBuilder.highwayPaths)
         {
             highwayPath.Cleanup();
         }
 
+        worldBuilder.highwayPaths.Clear();
         foreach (Path wildernessPath in worldBuilder.wildernessPaths)
         {
             wildernessPath.Cleanup();
         }
 
-        worldBuilder.highwayPaths.Clear();
         worldBuilder.wildernessPaths.Clear();
-
-        yield return worldBuilder.FinalizeWater();
-        yield return worldBuilder.SerializeData();
-        yield return GCUtils.UnloadAndCollectCo();
-
-        Logging.Info("RWG final in {0}:{1:00}, r={2:x}", worldBuilder.totalMS.Elapsed.Minutes, worldBuilder.totalMS.Elapsed.Seconds, Rand.Instance.PeekSample());
-
-        yield break;
+        worldBuilder.FinalizeWater();
     }
 
     private static float ClampHeight(float height)

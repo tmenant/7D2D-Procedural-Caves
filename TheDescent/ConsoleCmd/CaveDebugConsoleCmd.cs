@@ -24,7 +24,7 @@ public class CaveDebugConsoleCmd : ConsoleCmdAbstract
     private static void ClusterCommand(List<string> _params)
     {
         var playerPos = GameManager.Instance.World.GetPrimaryPlayer().position;
-        var prefabInstance = GameManager.Instance.World.GetPOIAtPosition(playerPos, false);
+        var prefabInstance = GameManager.Instance.World.GetPOIAtPosition(playerPos);
 
         if (prefabInstance == null)
         {
@@ -55,7 +55,7 @@ public class CaveDebugConsoleCmd : ConsoleCmdAbstract
     private static void PrefabCommand(List<string> _params)
     {
         var playerPos = GameManager.Instance.World.GetPrimaryPlayer().position;
-        var prefabInstance = GameManager.Instance.World.GetPOIAtPosition(playerPos, false);
+        var prefabInstance = GameManager.Instance.World.GetPOIAtPosition(playerPos);
 
         if (prefabInstance == null)
         {

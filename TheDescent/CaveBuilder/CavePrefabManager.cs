@@ -50,7 +50,7 @@ public class CavePrefabManager
         this.UsedPrefabsWorld = worldDatas.prefabs;
 
         var timer = new MicroStopwatch(true);
-        var prefabLocations = PathAbstractions.PrefabsSearchPaths.GetAvailablePathsList(null, null, null, _ignoreDuplicateNames: true);
+        var prefabLocations = PathAbstractions.PrefabsSearchPaths.GetAvailablePathsList(null, _ignoreDuplicateNames: true);
 
         for (int i = 0; i < prefabLocations.Count; i++)
         {
@@ -376,7 +376,7 @@ public class CavePrefabManager
 
                 foreach (var node in prefab.nodes)
                 {
-                    node.position = prefab.position + node.marker.start;
+                    node.position = prefab.position + node.marker.startPos;
                 }
 
                 AddPrefab(prefab);

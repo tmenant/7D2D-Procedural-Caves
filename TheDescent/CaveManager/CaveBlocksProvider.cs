@@ -23,7 +23,7 @@ public class CaveChunksProvider
     public CaveChunksProvider(string worldName, int worldSize)
     {
         this.worldSize = worldSize;
-        cavemapDir = $"{GameIO.GetWorldDir(worldName)}/cavemap";
+        this.cavemapDir = CaveUtils.GetCaveMapPath(worldName);
     }
 
     public int GetRegionID(Vector2s chunkPos)

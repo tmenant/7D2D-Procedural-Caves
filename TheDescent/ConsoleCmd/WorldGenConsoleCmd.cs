@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 public class WorldGenConsoleCmd : ConsoleCmdAbstract
 {
-    private readonly DynamicPrefabDecorator dynamicPrefabDecorator = new DynamicPrefabDecorator();
-
     public override bool AllowedInMainMenu => true;
 
     public override string[] getCommands()

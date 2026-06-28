@@ -233,11 +233,11 @@ public class CaveMap
         return waterPositions;
     }
 
-    public IEnumerator SetWaterCoroutine(CavePrefabManager cachedPrefabs, WorldBuilder worldBuilder, HashSet<CaveBlock> localMinimas)
+    public void SetWaterCoroutine(CavePrefabManager cachedPrefabs, WorldBuilder worldBuilder, HashSet<CaveBlock> localMinimas)
     {
         if (CaveConfig.caveWater == WorldBuilder.GenerationSelections.None)
         {
-            yield break;
+            return;
         }
 
         int index = 0;
@@ -260,8 +260,7 @@ public class CaveMap
 
             if (index % 100 == 0)
             {
-                Logging.Debug($"Water processed: {count} / {index} / {localMinimas.Count}");
-                yield return worldBuilder.SetMessage($"Water processing: {100.0f * index / localMinimas.Count:F0}%");
+                worldBuilder.SetTaskMessage($"Water processing: {100.0f * index / localMinimas.Count:F0}%");
             }
 
             if (positions.Count > 0)

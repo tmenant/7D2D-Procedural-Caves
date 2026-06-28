@@ -9,7 +9,7 @@ public class GraphNode
 
     public Direction direction;
 
-    public Prefab.Marker marker;
+    public PrefabVolumes.Marker marker;
 
     public int PrefabID => prefab.id;
 
@@ -17,13 +17,13 @@ public class GraphNode
 
     public int sqrRadius;
 
-    public GraphNode(Prefab.Marker marker, CavePrefab prefab)
+    public GraphNode(PrefabVolumes.Marker marker, CavePrefab prefab)
     {
         this.marker = marker;
         this.prefab = prefab;
 
         CaveUtils.Assert(marker != null, $"null marker");
-        CaveUtils.Assert(marker.start != null, $"null marker start");
+        CaveUtils.Assert(marker.startPos != null, $"null marker start");
         CaveUtils.Assert(marker.size != null, $"null marker size");
 
         NodeRadius = GetNodeRadius();
@@ -32,13 +32,13 @@ public class GraphNode
 
         // TODO: find a way to ensure that the node is in the marker volume
         position = new Vector3i(
-            (int)(prefab.position.x + marker.start.x + marker.size.x / 2f),
-            (int)(prefab.position.y + marker.start.y + marker.size.y / 2f),
-            (int)(prefab.position.z + marker.start.z + marker.size.z / 2f)
+            (int)(prefab.position.x + marker.startPos.x + marker.size.x / 2f),
+            (int)(prefab.position.y + marker.startPos.y + marker.size.y / 2f),
+            (int)(prefab.position.z + marker.startPos.z + marker.size.z / 2f)
         );
         direction = GetDirection();
 
-        CaveUtils.Assert(direction != Direction.None, $"None direction: {prefab.PrefabName}, marker start: [{marker.start}], prefab size:[{prefab.Size}]");
+        CaveUtils.Assert(direction != Direction.None, $"None direction: {prefab.PrefabName}, marker start: [{marker.startPos}], prefab size:[{prefab.Size}]");
     }
 
     public GraphNode(Vector3i worldPos)
@@ -46,12 +46,12 @@ public class GraphNode
         position = worldPos;
     }
 
-    public static Vector3i MarkerCenter(Prefab.Marker marker)
+    public static Vector3i MarkerCenter(PrefabVolumes.Marker marker)
     {
         return new Vector3i(
-            (int)(marker.start.x + marker.size.x / 2f),
-            (int)(marker.start.y + marker.size.y / 2f),
-            (int)(marker.start.z + marker.size.z / 2f)
+            (int)(marker.startPos.x + marker.size.x / 2f),
+            (int)(marker.startPos.y + marker.size.y / 2f),
+            (int)(marker.startPos.z + marker.size.z / 2f)
         );
     }
 
@@ -69,16 +69,16 @@ public class GraphNode
 
     private Direction GetDirection()
     {
-        if (marker.start.x == -1)
+        if (marker.startPos.x == -1)
             return Direction.North;
 
-        if (marker.start.x == prefab.Size.x)
+        if (marker.startPos.x == prefab.Size.x)
             return Direction.South;
 
-        if (marker.start.z == -1)
+        if (marker.startPos.z == -1)
             return Direction.West;
 
-        if (marker.start.z == prefab.Size.z)
+        if (marker.startPos.z == prefab.Size.z)
             return Direction.East;
 
         return Direction.None;
@@ -93,7 +93,7 @@ public class GraphNode
 
     public IEnumerable<Vector3i> GetMarkerPoints()
     {
-        var p1 = prefab.position + marker.start;
+        var p1 = prefab.position + marker.startPos;
         var p2 = p1 + marker.size;
 
         for (int x = p1.x; x < p2.x; x++)
@@ -108,7 +108,7 @@ public class GraphNode
         }
     }
 
-    public int GetMarkerRadius(Prefab.Marker marker)
+    public int GetMarkerRadius(PrefabVolumes.Marker marker)
     {
         int radius = Utils.FastMax(5, CaveUtils.FastMax(marker.size.x, marker.size.z, marker.size.y) / 2);
 
@@ -132,13 +132,13 @@ public class GraphNode
         var visited = new HashSet<Vector3i>();
         var index = 100_000;
 
-        var markerStart = prefab.position + marker.start;
+        var markerStart = prefab.position + marker.startPos;
         var markerEnd = markerStart + marker.size;
         var radius = GetMarkerRadius(marker);
         var sqrRadius = radius * radius;
 
         CaveUtils.Assert(radius >= 5, $"marker radius should be over 5: {radius}");
-        CaveUtils.Assert(!prefab.Intersect3D(center), $"Marker {marker.start} intersect with prefab {prefab.PrefabName}");
+        CaveUtils.Assert(!prefab.Intersect3D(center), $"Marker {marker.startPos} intersect with prefab {prefab.PrefabName}");
 
         while (queue.Count > 0 && index-- > 0)
         {
