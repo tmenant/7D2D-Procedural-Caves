@@ -5,8 +5,10 @@ using WorldGenerationEngineFinal;
 
 
 [HarmonyPatch(typeof(PrefabManagerData), "LoadPrefabs")]
-public static class H_PrefabManagerData
+public class H_PrefabManagerData
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<H_PrefabManagerData>();
+
     // prefix to be runned when caveGeneration is disabled, to filter underground prefabs
     public static bool Prefix(PrefabManagerData __instance)
     {
@@ -40,7 +42,7 @@ public static class H_PrefabManagerData
                 // PATCH START //
                 if (prefabData.Tags.Test_AllSet(CaveTags.tagCaveTrader))
                 {
-                    Logging.Warning($"Skip underground trader '{prefabData.Name}'");
+                    logger.Warning($"Skip underground trader '{prefabData.Name}'");
                     continue;
                 }
 

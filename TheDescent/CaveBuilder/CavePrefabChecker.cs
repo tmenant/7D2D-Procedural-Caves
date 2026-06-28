@@ -12,25 +12,25 @@ public class CavePrefabChecker
 
         if (!HasRequiredTags(prefabData))
         {
-            Logging.Warning(SkippingBecause(prefabData.Name, $"missing cave type tag: {prefabData.Tags}"));
+            logger.Warning(SkippingBecause(prefabData.Name, $"missing cave type tag: {prefabData.Tags}"));
             result = false;
         }
 
         if (!ContainsCaveMarkers(prefabData))
         {
-            Logging.Warning(SkippingBecause(prefabData.Name, "no cave marker was found."));
+            logger.Warning(SkippingBecause(prefabData.Name, "no cave marker was found."));
             result = false;
         }
 
         if (!PrefabMarkersAreValid(prefabData))
         {
-            Logging.Warning(SkippingBecause(prefabData.Name, "at least one marker is invalid."));
+            logger.Warning(SkippingBecause(prefabData.Name, "at least one marker is invalid."));
             result = false;
         }
 
         if (HasOverlappingMarkers(prefabData))
         {
-            Logging.Warning(SkippingBecause(prefabData.Name, "cave markers overlaps"));
+            logger.Warning(SkippingBecause(prefabData.Name, "cave markers overlaps"));
             result = false;
         }
 
@@ -90,7 +90,7 @@ public class CavePrefabChecker
 
             if (!isOnBound_x && !isOnBound_z)
             {
-                Logging.Warning($"cave marker out of bounds: [{marker.startPos}] '{prefab.Name}'");
+                logger.Warning($"cave marker out of bounds: [{marker.startPos}] '{prefab.Name}'");
                 return false;
             }
 
