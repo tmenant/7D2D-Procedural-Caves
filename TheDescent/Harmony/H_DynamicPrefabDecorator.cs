@@ -14,3 +14,23 @@ public class DynamicPrefabDecorator_DecorateChunk
         }
     }
 }
+
+
+/// <summary>
+/// Prevents to copy prefab heightmap from ungerground prefabs.
+/// Prevents a bug where the heightmap near an underground prefab sticks to the prefab top
+/// </summary>
+[HarmonyPatch(typeof(DynamicPrefabDecorator), "copyPrefabsIntoHeightMap")]
+public static class DynamicPrefabDecorator_copyPrefabsIntoHeightMap
+{
+    public static bool Prefix(PrefabInstance _pi, int _heightMapWidth, int _heightMapHeight, IBackedArray<ushort> _heightData, int _heightMapScale, ushort[] _topTextures = null)
+    {
+        if (_pi.prefab.tags.Test_AnySet(CaveTags.tagCaveUnderground))
+        {
+            Logging.Warning($"DynamicPrefabDecorator.copyPrefabsIntoHeightMap ignored for prefab: '{_pi.prefab.PrefabName}'");
+            return false;
+        }
+
+        return true;
+    }
+}
