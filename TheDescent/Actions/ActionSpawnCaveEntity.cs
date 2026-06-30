@@ -7,6 +7,8 @@ using UnityEngine;
 // We just need to override FindValidPosition, but it is a static method... so we copy most of the entire ActionSpawnEntity class... YOLO !
 public class ActionSpawnCaveEntity : ActionSpawnEntity
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<ActionSpawnCaveEntity>();
+
     public override ActionCompleteStates OnPerformAction()
     {
         if (!Owner.HasTarget())
@@ -339,7 +341,7 @@ public class ActionSpawnCaveEntity : ActionSpawnEntity
             entity.SetSpawnerSource(EnumSpawnerSource.Dynamic);
             world.SpawnEntityInWorld(entity);
 
-            Logging.Debug($"ActionSpawnCaveEntity: entity spawned at {entity.position}");
+            logger.Debug($"ActionSpawnCaveEntity: entity spawned at {entity.position}");
 
             if (target != null && spawnSound != "")
             {

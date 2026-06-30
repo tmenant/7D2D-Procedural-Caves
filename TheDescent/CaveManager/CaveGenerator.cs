@@ -8,6 +8,8 @@ using UnityEngine;
 
 public class CaveGenerator
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CaveGenerator>();
+
     private static CaveChunksProvider caveChunksProvider;
 
     private static Vector3i HalfWorldSize;
@@ -28,12 +30,12 @@ public class CaveGenerator
             HalfWorldSize = CaveUtils.HalfWorldSize(worldSize);
             isEnabled = true;
 
-            Logging.Info($"init caveGenerator for world '{worldName}', size: {worldSize}");
+            logger.Info($"init caveGenerator for world '{worldName}', size: {worldSize}");
         }
         else
         {
             isEnabled = false;
-            Logging.Warning($"no cavemap found for world '{worldName}'");
+            logger.Warning($"no cavemap found for world '{worldName}'");
         }
     }
 
@@ -62,7 +64,7 @@ public class CaveGenerator
     {
         if (chunk == null)
         {
-            Logging.Warning($"Null chunk at {chunk.ChunkPos}");
+            logger.Warning($"Null chunk at {chunk.ChunkPos}");
             return;
         }
 
@@ -334,7 +336,7 @@ public class CaveGenerator
 
         int y = worldPos.y;
 
-        // Logging.Debug($"{blockValue.Block.blockName}, position: {worldPos} rotation: {blockValue.rotation}, [{x0},{z0} -> {x1},{z1}]");
+        // logger.Debug($"{blockValue.Block.blockName}, position: {worldPos} rotation: {blockValue.rotation}, [{x0},{z0} -> {x1},{z1}]");
 
         var position = Vector3i.zero;
 
@@ -350,17 +352,17 @@ public class CaveGenerator
                 bool isCaveBlock = caveChunksProvider.IsCave(x, y, z);
                 bool isAlreadyDecorated = decoratedPositions.Contains(position);
 
-                // Logging.Debug($"---- {x},{y},{z}: isAirBelow: {isAirBelow}, isCaveBlock: {isCaveBlock}, isAlreadyDecorated: {isAlreadyDecorated}");
+                // logger.Debug($"---- {x},{y},{z}: isAirBelow: {isAirBelow}, isCaveBlock: {isCaveBlock}, isAlreadyDecorated: {isAlreadyDecorated}");
 
                 if (isAirBelow || (isCaveBlock && isAlreadyDecorated))
                 {
-                    // Logging.Debug("xxxx invalid placement");
+                    // logger.Debug("xxxx invalid placement");
                     return false;
                 }
             }
         }
 
-        // Logging.Debug("++++ valid placement");
+        // logger.Debug("++++ valid placement");
 
         return true;
     }

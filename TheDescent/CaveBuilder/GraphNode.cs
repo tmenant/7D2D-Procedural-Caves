@@ -3,6 +3,8 @@ using System.Linq;
 
 public class GraphNode
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<GraphNode>();
+
     public Vector3i position;
 
     public CavePrefab prefab;
@@ -61,7 +63,7 @@ public class GraphNode
 
         if (prefab.isNaturalEntrance)
         {
-            Logging.Debug($"entrance radius: {radius}");
+            logger.Debug($"entrance radius: {radius}");
         }
 
         return radius;

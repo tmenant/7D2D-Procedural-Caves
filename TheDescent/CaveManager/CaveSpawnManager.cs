@@ -23,7 +23,7 @@ public class CaveSpawnManager
 
             if (currentNode.SqrEuclidianDist(startNode) > sqrMinSpawnDist && world.CanMobsSpawnAtPos(currentNode.position))
             {
-                // Logging.Info($"spawn position found at '{currentNode.position}', rolls: {rolls}, timer: {timer.ElapsedMilliseconds}ms");
+                // logger.Info($"spawn position found at '{currentNode.position}', rolls: {rolls}, timer: {timer.ElapsedMilliseconds}ms");
                 return currentNode.position;
             }
 

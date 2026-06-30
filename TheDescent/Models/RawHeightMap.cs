@@ -7,6 +7,8 @@ using WorldGenerationEngineFinal;
 
 public class RawHeightMap
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<RawHeightMap>();
+
     private readonly NativeArray<float> heightMap;
 
     public readonly int worldSize;
@@ -64,7 +66,7 @@ public class RawHeightMap
             return heightMap[index];
         }
 
-        Logging.Warning($"worldsize: {worldSize}, pos: [{x}, {z}]");
+        logger.Warning($"worldsize: {worldSize}, pos: [{x}, {z}]");
         return 0;
     }
 

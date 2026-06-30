@@ -23,7 +23,7 @@ public class CmdBezier : CmdAbstract
             .Select(pos => new Voxell(pos))
             .ToHashSet();
 
-        Logging.Info($"blocks: {voxells.Count}, timer: {timer.ElapsedMilliseconds}ms");
+        logger.Info($"blocks: {voxells.Count}, timer: {timer.ElapsedMilliseconds}ms");
 
         DrawingUtils.GenerateObjFile("bezier.obj", voxells, true);
     }

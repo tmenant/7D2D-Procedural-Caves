@@ -17,6 +17,8 @@ using Path = System.IO.Path;
  */
 public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CaveEditorConsoleCmd>();
+
     private readonly Dictionary<string, byte> markerDirectionsMapping = new Dictionary<string, byte>()
     {
         {"n", 0},
@@ -80,7 +82,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
         if (blockValue.isair && !allowAir)
         {
-            Logging.Error($"Invalid selected item: '{holdingItemItemValue.ItemClass.Name}'");
+            logger.Error($"Invalid selected item: '{holdingItemItemValue.ItemClass.Name}'");
             return null;
         }
 
@@ -89,7 +91,6 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
     private void CaveMarkerCommand(List<string> args)
     {
-        var logger = Logging.CreateLogger("CaveMarker");
         var selection = BlockToolSelection.Instance;
         var isActive = selection.SelectionActive;
 
@@ -175,7 +176,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
         if (blockValue.isair)
         {
-            Logging.Error($"Invalid filler block: '{holdingItemItemValue.ItemClass.Name}'");
+            logger.Error($"Invalid filler block: '{holdingItemItemValue.ItemClass.Name}'");
             return;
         }
 
@@ -203,7 +204,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
         if (blockValue.isair)
         {
-            Logging.Error($"Invalid filler block: '{holdingItemItemValue.ItemClass.Name}'");
+            logger.Error($"Invalid filler block: '{holdingItemItemValue.ItemClass.Name}'");
             return;
         }
 
@@ -228,7 +229,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
     {
         if (args.Count < 2)
         {
-            Logging.Error("Missing argument: 'fill' or 'empty'");
+            logger.Error("Missing argument: 'fill' or 'empty'");
             return;
         }
 
@@ -272,7 +273,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
         if (!isActive)
         {
-            Logging.Error("The selection is empty.");
+            logger.Error("The selection is empty.");
             return;
         }
 
@@ -282,7 +283,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
         if (blockValue.isair)
         {
-            Logging.Error($"Invalid selected item: '{holdingItemItemValue.ItemClass.Name}'");
+            logger.Error($"Invalid selected item: '{holdingItemItemValue.ItemClass.Name}'");
             return;
         }
 
@@ -297,7 +298,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
         if (start.y < 0 || end.y < 0)
         {
-            Logging.Error("Start position height must be over 0.");
+            logger.Error("Start position height must be over 0.");
             return;
         }
 
@@ -402,12 +403,12 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
                     break;
 
                 default:
-                    Logging.Warning($"invalid tag: '{args[1]}'");
+                    logger.Warning($"invalid tag: '{args[1]}'");
                     break;
             }
         }
 
-        Logging.Info($"cave prefab tag success: '{prefabInstance.prefab.tags}'");
+        logger.Info($"cave prefab tag success: '{prefabInstance.prefab.tags}'");
     }
 
     private void StalactiteCommand(List<string> args)
@@ -417,7 +418,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
         if (!selection.SelectionActive)
         {
-            Logging.Error("Selection box is empty");
+            logger.Error("Selection box is empty");
             return;
         }
 
@@ -431,7 +432,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
         }
         else
         {
-            Logging.Error($"Invalid height: '{args[1]}'");
+            logger.Error($"Invalid height: '{args[1]}'");
             return;
         }
     }
@@ -444,7 +445,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
         if (blockValue.isair)
         {
-            Logging.Error($"Invalid filler block: '{holdingItemItemValue.ItemClass.Name}'");
+            logger.Error($"Invalid filler block: '{holdingItemItemValue.ItemClass.Name}'");
             return;
         }
 
@@ -476,7 +477,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
     {
         if (args.Count < 2)
         {
-            Logging.Error("[RenameCommand] No name was given");
+            logger.Error("[RenameCommand] No name was given");
             return;
         }
 
@@ -485,7 +486,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
         if (!Regex.IsMatch(newName, pattern))
         {
-            Logging.Warning("[RenameCommand] Naming convention not respected: <author>_<prefab type>_<identifier>");
+            logger.Warning("[RenameCommand] Naming convention not respected: <author>_<prefab type>_<identifier>");
         }
 
         var prefab = GetCurrentPrefab().prefab;
@@ -501,7 +502,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
         if (File.Exists(newLocation.FullPath))
         {
-            Logging.Error($"[RenameCommand] A prefab named '{newName}' already exists.");
+            logger.Error($"[RenameCommand] A prefab named '{newName}' already exists.");
             return;
         }
 
@@ -513,7 +514,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
             if (filename.StartsWith(currentName))
             {
-                Logging.Info($"{path} -> {newPath}");
+                logger.Info($"{path} -> {newPath}");
                 File.Move(path, newPath);
             }
         }
@@ -530,12 +531,11 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
 
     private void NotImplementedCommand(string commandName)
     {
-        Logging.Error($"Not implemented command: '{commandName}'");
+        logger.Error($"Not implemented command: '{commandName}'");
     }
 
     private void SetMarkerDirectionCommand(List<string> args)
     {
-        var logger = Logging.CreateLogger("SetMarkerDirection");
         var marker = BlockSelectionUtils.GetSelectedMarker();
 
         if (marker is null)
@@ -569,13 +569,13 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
     {
         if (!PrefabEditModeManager.Instance.IsActive())
         {
-            Logging.Info("Command available in prefab editor only.");
+            logger.Info("Command available in prefab editor only.");
             return;
         }
 
         if (_params.Count == 0)
         {
-            Logging.Info(getDescription());
+            logger.Info(getDescription());
             return;
         }
 
@@ -670,7 +670,7 @@ public class CaveEditorConsoleCmd : ConsoleCmdAbstract
                 break;
 
             default:
-                Logging.Error($"Invalid or not implemented command: '{_params[0]}'");
+                logger.Error($"Invalid or not implemented command: '{_params[0]}'");
                 break;
         }
     }

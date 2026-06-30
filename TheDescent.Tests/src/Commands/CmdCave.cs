@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 public class CmdCave : CmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CmdCave>();
+
     public override string[] GetCommands()
     {
         return new string[] { "cave" };
@@ -26,7 +28,7 @@ public class CmdCave : CmdAbstract
 
         cachedPrefabs.AddRandomPrefabs(rand, heightMap, prefabCount, prefabs);
 
-        Logging.Info("Start solving graph...");
+        logger.Info("Start solving graph...");
 
         var memoryBefore = GC.GetTotalMemory(true);
         var graph = new Graph(cachedPrefabs.Prefabs, worldSize);
@@ -45,7 +47,7 @@ public class CmdCave : CmdAbstract
 
                 Parallel.ForEach(graph.Edges, edge =>
                 {
-                    Logging.Info($"Cave tunneling: {100.0f * index++ / graph.Edges.Count:F0}% ({index} / {graph.Edges.Count})");
+                    logger.Info($"Cave tunneling: {100.0f * index++ / graph.Edges.Count:F0}% ({index} / {graph.Edges.Count})");
 
                     var tunnel = new CaveTunnel(edge, cachedPrefabs, heightMap, worldSize, seed);
 
@@ -68,10 +70,10 @@ public class CmdCave : CmdAbstract
 
         // cavemap.SetWater(cachedPrefabs, localMinimas);
 
-        Logging.Info($"{cavemap.BlocksCount:N0} cave blocks generated ({cavemap.TunnelsCount} unique tunnels), timer={timer.ElapsedMilliseconds:N0}ms, memory={(GC.GetTotalMemory(true) - memoryBefore) / 1_048_576.0:N1}MB.");
-        Logging.Info($"{localMinimas.Count} local minimas");
+        logger.Info($"{cavemap.BlocksCount:N0} cave blocks generated ({cavemap.TunnelsCount} unique tunnels), timer={timer.ElapsedMilliseconds:N0}ms, memory={(GC.GetTotalMemory(true) - memoryBefore) / 1_048_576.0:N1}MB.");
+        logger.Info($"{localMinimas.Count} local minimas");
 
-        Logging.Debug($"region offset: {CaveConfig.RegionSizeOffset}");
+        logger.Debug($"region offset: {CaveConfig.RegionSizeOffset}");
         cavemap.Save("ignore/cavemap", worldSize);
 
         if (worldSize > 1024)

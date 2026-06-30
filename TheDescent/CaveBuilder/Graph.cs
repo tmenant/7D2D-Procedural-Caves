@@ -6,6 +6,8 @@ using System.Linq;
 
 public class Graph
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<Graph>();
+
     public HashSet<GraphEdge> Edges { get; set; }
 
     public HashSet<GraphNode> Nodes { get; set; }
@@ -13,8 +15,6 @@ public class Graph
     public Dictionary<GraphNode, HashSet<GraphEdge>> relatedEdges;
 
     public Dictionary<int, HashSet<GraphEdge>> relatedPrefabs;
-
-    private Logging.Logger logger = Logging.CreateLogger("CaveGraph");
 
     public Graph(IEnumerable<CavePrefab> prefabs, int worldSize)
     {

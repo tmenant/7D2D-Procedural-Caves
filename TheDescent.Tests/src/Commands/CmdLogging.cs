@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class CmdLogging : CmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CmdLogging>();
 
     public override string[] GetCommands()
     {
@@ -15,13 +16,10 @@ public class CmdLogging : CmdAbstract
         Log.Warning("Warning");
         Log.Error("Error");
 
-        Logging.Debug("Debug ?");
-        Logging.Info("Info :)");
-        Logging.Warning("Warning !");
-        Logging.Error("Error :(");
-
-
-        var logger = Logging.CreateLogger("logger");
+        logger.Debug("Debug ?");
+        logger.Info("Info :)");
+        logger.Warning("Warning !");
+        logger.Error("Error :(");
 
         // logger.Info("Debug ?");
         // logger.Info("Info :)");

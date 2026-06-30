@@ -5,8 +5,10 @@ using HarmonyLib;
 
 
 [HarmonyPatch(typeof(LootFromXml), "ParseItemList")]
-public static class LootFromXml_ParseItemList
+public class LootFromXml_ParseItemList
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<LootFromXml_ParseItemList>();
+
     public static bool Prefix(string _containerId, IEnumerable<XElement> _childNodes, List<LootContainer.LootEntry> _itemList, int _minQualityBase, int _maxQualityBase)
     {
         foreach (XElement _childNode in _childNodes)
@@ -27,7 +29,7 @@ public static class LootFromXml_ParseItemList
                 if (!LootContainer.lootGroups.TryGetValue(attribute, out lootEntry.group))
                 {
                     // PATCH IS HERE
-                    Logging.Warning("lootgroup '" + attribute + "' does not exist or has not been defined before being reference by lootcontainer/lootgroup name='" + _containerId + "'");
+                    logger.Warning("lootgroup '" + attribute + "' does not exist or has not been defined before being reference by lootcontainer/lootgroup name='" + _containerId + "'");
                     continue;
                     // PATCH IS HERE
                 }

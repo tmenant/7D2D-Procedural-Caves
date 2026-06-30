@@ -26,7 +26,7 @@ public class BlockClusterizer
         var clusters = ClusterizeBlocks(blocks);
         // var merged = new List<BoundingBox>();
 
-        // Logging.Info($"{blocks.Count} blocks found.");
+        // logger.Info($"{blocks.Count} blocks found.");
 
         // foreach (var cluster in clusters)
         // {

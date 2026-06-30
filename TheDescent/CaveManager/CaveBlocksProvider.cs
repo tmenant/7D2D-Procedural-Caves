@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-using Logger = Logging.Logger;
-
 public class CaveChunksProvider
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CaveChunksProvider>();
+
     public string cavemapDir;
 
     public readonly CaveGraph caveGraph;
@@ -17,8 +17,6 @@ public class CaveChunksProvider
     private readonly int worldSize;
 
     private static readonly int maxQueueSize = 4;
-
-    private readonly Logger logger = Logging.CreateLogger("CaveChunksProvider", Logging.loggingLevel);
 
     public CaveChunksProvider(string worldName, int worldSize)
     {

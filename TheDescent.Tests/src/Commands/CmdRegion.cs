@@ -2,6 +2,8 @@ using System.Collections.Generic;
 
 public class CmdRegion : CmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CmdRegion>();
+
     public override string[] GetCommands()
     {
         return new string[] { "region" };
@@ -22,10 +24,10 @@ public class CmdRegion : CmdAbstract
 
             totalBlocks += blocksCount;
 
-            Logging.Info($"{i}: ChunkCount={region.ChunkCount}, blocks: {blocksCount:N0} timer={timer.ElapsedMilliseconds}ms");
+            logger.Info($"{i}: ChunkCount={region.ChunkCount}, blocks: {blocksCount:N0} timer={timer.ElapsedMilliseconds}ms");
         }
 
-        Logging.Info($"Total blocks: {totalBlocks:N0}");
+        logger.Info($"Total blocks: {totalBlocks:N0}");
     }
 
 }

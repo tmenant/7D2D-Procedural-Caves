@@ -7,6 +7,8 @@ using WorldGenerationEngineFinal;
 
 public class CaveMap
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CaveMap>();
+
     private readonly Dictionary<int, List<int>> rleLayers;
 
     public int BlocksCount => rleLayers.Values.Sum(layers => layers.Sum(layerHash => RLELayer.Count(layerHash)));
@@ -276,7 +278,7 @@ public class CaveMap
 
         if (!rleLayers.ContainsKey(hashZX))
         {
-            Logging.Error($"pos: [{position}], rleLayers: {rleLayers.Count}");
+            logger.Error($"pos: [{position}], rleLayers: {rleLayers.Count}");
         }
 
         var layers = rleLayers[hashZX];

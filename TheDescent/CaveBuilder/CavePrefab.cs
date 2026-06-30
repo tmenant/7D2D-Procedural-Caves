@@ -1,11 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using WorldGenerationEngineFinal;
 using Random = System.Random;
 
 public class CavePrefab
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CavePrefab>();
+
     public PrefabDataInstance prefabDataInstance;
 
     public Vector3i position;
@@ -405,7 +405,7 @@ public class CavePrefab
     {
         if (nodes == null)
         {
-            Logging.Warning($"null cavePrefab nodes, isCluster: {isCluster}, isroom: {isRoom}, isBoundaryPrefab: {isBoundaryPrefab}, null pdi: {prefabDataInstance is null}, prefab name: {PrefabName}");
+            logger.Warning($"null cavePrefab nodes, isCluster: {isCluster}, isroom: {isRoom}, isBoundaryPrefab: {isBoundaryPrefab}, null pdi: {prefabDataInstance is null}, prefab name: {PrefabName}");
             yield break;
         }
 

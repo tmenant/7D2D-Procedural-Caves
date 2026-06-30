@@ -9,6 +9,8 @@ using System.Linq;
 // to create volumes where the caveBuilder is not allowed to generate tunnels
 public class TTSReader
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<TTSReader>();
+
     public static HashSet<Vector3i> ReadUndergroundBlocks(PrefabInstance prefabInstance)
     {
         var fullPath = prefabInstance.location.FullPath;
@@ -47,7 +49,7 @@ public class TTSReader
         }
         catch (Exception e)
         {
-            Logging.Error($"Error while reading .tts file '{fullPath}': {e}");
+            logger.Error($"Error while reading .tts file '{fullPath}': {e}");
             return null;
         }
     }

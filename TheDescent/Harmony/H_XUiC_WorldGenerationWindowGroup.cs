@@ -52,6 +52,8 @@ public class XUiC_WorldGenerationWindow_OnOpen
 [HarmonyPatch(typeof(XUiC_WorldGenerationWindow), "GenerateButton_OnPressed")]
 public class XUiC_WorldGenerationWindow_GenerateButton_OnPressed
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<XUiC_WorldGenerationWindow_GenerateButton_OnPressed>();
+
     public static bool Prefix(XUiController _sender, int _mouseButton)
     {
         CaveConfig.terrainOffset = H_XUiC_WorldGenerationWindow.TerrainOffset;
@@ -62,8 +64,8 @@ public class XUiC_WorldGenerationWindow_GenerateButton_OnPressed
         CaveConfig.generateWater = CaveConfig.caveWater != WorldBuilder.GenerationSelections.None;
         CaveConfig.generateCaves = CaveConfig.caveNetworks != WorldBuilder.GenerationSelections.None;
 
-        Logging.Info($"generateWater: {CaveConfig.generateWater}");
-        Logging.Info($"terrainOffset: {CaveConfig.terrainOffset}");
+        logger.Info($"generateWater: {CaveConfig.generateWater}");
+        logger.Info($"terrainOffset: {CaveConfig.terrainOffset}");
 
         return true;
     }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 public class CmdTunnel : CmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CmdTunnel>();
+
     public override string[] GetCommands()
     {
         return new string[] { "tunnel" };
@@ -42,10 +44,10 @@ public class CmdTunnel : CmdAbstract
 
         var edge = new GraphEdge(node1, node2);
 
-        Logging.Info($"prefab   {node2.prefab.position}");
-        Logging.Info($"start    {node2.marker.start}");
-        Logging.Info($"size     {node2.marker.size}");
-        Logging.Info($"result   {node2.position}\n");
+        logger.Info($"prefab   {node2.prefab.position}");
+        logger.Info($"start    {node2.marker.start}");
+        logger.Info($"size     {node2.marker.size}");
+        logger.Info($"result   {node2.position}\n");
 
         SphereManager.InitSpheres(5);
 
@@ -55,7 +57,7 @@ public class CmdTunnel : CmdAbstract
 
         cavemap.AddTunnel(tunnel);
 
-        Logging.Info($"{p1.position} -> {p2.position} | Astar dist: {tunnel.path.Count}, eucl dist: {FastMath.EuclidianDist(p1.position, p2.position)}, timer: {timer.ElapsedMilliseconds}ms");
+        logger.Info($"{p1.position} -> {p2.position} | Astar dist: {tunnel.path.Count}, eucl dist: {FastMath.EuclidianDist(p1.position, p2.position)}, timer: {timer.ElapsedMilliseconds}ms");
 
         var voxels = new HashSet<Voxell>(){
             new Voxell(p1.position, p1.Size, WaveFrontMaterial.DarkGreen) { force = true },

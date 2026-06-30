@@ -3,13 +3,15 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Collections.Generic;
 
-public static class PrefabLoader
+public class PrefabLoader
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<PrefabLoader>();
+
     public static IEnumerable<PrefabDataInstance> LoadPrefabs(string xmlPath)
     {
         if (!File.Exists(xmlPath))
         {
-            Logging.Warning($"prefab.xml not found: '{xmlPath}'");
+            logger.Warning($"prefab.xml not found: '{xmlPath}'");
         }
 
         var document = XDocument.Parse(File.ReadAllText(xmlPath));

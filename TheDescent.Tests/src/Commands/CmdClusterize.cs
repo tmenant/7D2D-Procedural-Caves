@@ -6,6 +6,8 @@ using System.Xml;
 
 public class CmdClusterize : CmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CmdClusterize>();
+
     private static readonly string sevenDaysDir = "C:/SteamLibrary/steamapps/common/7 Days To Die";
 
     private static readonly string localPrefabs = Environment.GetEnvironmentVariable("appdata") + "/7DaysToDie";
@@ -45,7 +47,7 @@ public class CmdClusterize : CmdAbstract
         var yOffset = GetYOffset(xmlPath);
         var clusters = BlockClusterizer.Clusterize(ttsPath, yOffset);
 
-        Logging.Info($"{Path.GetFileName(ttsPath)}: yOffset={yOffset}, {clusters.Count} clusters found");
+        logger.Info($"{Path.GetFileName(ttsPath)}: yOffset={yOffset}, {clusters.Count} clusters found");
     }
 
     public string ComputeMD5Hash(string ttsPath)

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class CaveTunnel
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CaveTunnel>();
+
     public readonly List<CaveBlock> path = new List<CaveBlock>();
 
     public readonly HashSet<CaveBlock> blocks = new HashSet<CaveBlock>();
@@ -75,7 +77,7 @@ public class CaveTunnel
             }
         }
 
-        Logging.Warning($"No Path found from {startNode.position} to {target}");
+        logger.Warning($"No Path found from {startNode.position} to {target}");
     }
 
     public Vector3i FindMidPoint(Vector3i p1, Vector3i p2, CavePrefabManager cachedPrefabs)

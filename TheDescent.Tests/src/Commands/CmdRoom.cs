@@ -4,6 +4,8 @@ using System.Linq;
 
 public class CmdRoom : CmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CmdRoom>();
+
     public override string[] GetCommands()
     {
         return new string[] { "room" };
@@ -27,7 +29,7 @@ public class CmdRoom : CmdAbstract
 
         var voxels = room.GetBlocks().Select(pos => new Voxell(pos)).ToHashSet();
 
-        Logging.Info($"timer: {timer.ElapsedMilliseconds}ms");
+        logger.Info($"timer: {timer.ElapsedMilliseconds}ms");
 
         // var voxels = new HashSet<Voxell>
         // {

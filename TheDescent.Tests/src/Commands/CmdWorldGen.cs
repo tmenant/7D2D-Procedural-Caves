@@ -9,6 +9,8 @@ using System.Xml.XPath;
 
 public class CmdWorldGen : CmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CmdWorldGen>();
+
     private const string worldPath = "ignore/Navezgane";
 
     private readonly DynamicPrefabDecorator dynamicPrefabDecorator = new DynamicPrefabDecorator();
@@ -37,7 +39,7 @@ public class CmdWorldGen : CmdAbstract
 
         if (!File.Exists(xmlPath))
         {
-            Logging.Warning($"prefab.xml not found at '{_path}'");
+            logger.Warning($"prefab.xml not found at '{_path}'");
             return;
         }
 

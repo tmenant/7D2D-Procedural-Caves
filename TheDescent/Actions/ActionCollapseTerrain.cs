@@ -5,6 +5,8 @@ using System.Linq;
 
 public class ActionCollapseTerrain : BaseAction
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<ActionCollapseTerrain>();
+
     private const string buffCaveTerrainEventCoolDownProp = "buffCaveTerrainEventCoolDown";
 
     public override ActionCompleteStates OnPerformAction()
@@ -110,7 +112,7 @@ public class ActionCollapseTerrain : BaseAction
             }
         }
 
-        Logging.Info($"terrainCollapse, rolls: {rolls}, timer: {timer.ElapsedMilliseconds}ms");
+        logger.Info($"terrainCollapse, rolls: {rolls}, timer: {timer.ElapsedMilliseconds}ms");
 
         return flatBlocks;
     }

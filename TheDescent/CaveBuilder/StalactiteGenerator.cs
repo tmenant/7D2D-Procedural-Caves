@@ -1,16 +1,17 @@
 
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using Random = System.Random;
 
-public static class StalactiteGenerator
+public class StalactiteGenerator
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<StalactiteGenerator>();
+
     private static readonly Random Rand = new Random();
 
     public static void Generate(Vector3i start)
     {
-        Logging.Error("not implemented, give a height to have a result.");
+        logger.Error("not implemented, give a height to have a result.");
     }
 
     public static void Generate(Vector3i start, int height)

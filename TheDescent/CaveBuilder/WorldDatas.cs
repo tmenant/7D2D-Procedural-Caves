@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class WorldDatas
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<WorldDatas>();
+
     public readonly PathAbstractions.AbstractedLocation location;
 
     public readonly GameUtils.WorldInfo worldInfo;
@@ -64,7 +66,7 @@ public class WorldDatas
             }
         }
 
-        Logging.Debug($"{pixelCount} pixels for '{path}'");
+        logger.Debug($"{pixelCount} pixels for '{path}'");
 
         return result;
     }
@@ -81,9 +83,9 @@ public class WorldDatas
 
     public void Debug()
     {
-        Logging.Debug($"name: {name}");
-        Logging.Debug($"size: {size}");
-        Logging.Debug($"seed: {seed}");
+        logger.Debug($"name: {name}");
+        logger.Debug($"size: {size}");
+        logger.Debug($"seed: {seed}");
     }
 
     public List<StreetTileData> GetStreetTiles()

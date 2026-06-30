@@ -4,12 +4,12 @@ using UnityEngine;
 
 
 [HarmonyPatch(typeof(QuestEventManager), "SetupTraderPrefabList")]
-public static class QuestEventManager_SetupTraderPrefabList
+public class QuestEventManager_SetupTraderPrefabList
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<QuestEventManager_SetupTraderPrefabList>();
+
     public static bool Prefix(QuestEventManager __instance, TraderArea area)
     {
-        var logger = Logging.CreateLogger("TheDescent.H_QuestEventManager");
-
         if (__instance.TraderPrefabList.ContainsKey(area))
         {
             return false;

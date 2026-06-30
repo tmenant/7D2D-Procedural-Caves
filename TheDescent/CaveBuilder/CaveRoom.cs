@@ -18,6 +18,8 @@ public struct CaveMarker
 
 public class CaveRoom
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CaveRoom>();
+
     public int randomFillPercent = 51;
 
     public int passes = 10;
@@ -223,7 +225,7 @@ public class CaveRoom
             }
         }
 
-        Logging.Warning($"room: no path found, index: {index}, seed: {seed}");
+        logger.Warning($"room: no path found, index: {index}, seed: {seed}");
 
         return new List<Vector3i>();
     }

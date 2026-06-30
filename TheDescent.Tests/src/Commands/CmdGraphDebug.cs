@@ -5,6 +5,8 @@ using System.IO;
 
 public class CmdGraphDebug : CmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CmdGraphDebug>();
+
     public override string[] GetCommands()
     {
         return new string[] { "graphdebug" };
@@ -24,7 +26,7 @@ public class CmdGraphDebug : CmdAbstract
 
             int prefabCount = int.Parse(reader.ReadLine());
 
-            Logging.Info("prefabCount: " + prefabCount.ToString());
+            logger.Info("prefabCount: " + prefabCount.ToString());
             for (int i = 0; i < prefabCount; i++)
             {
                 var start = new Vector3i(
@@ -47,7 +49,7 @@ public class CmdGraphDebug : CmdAbstract
 
             int edgesCount = int.Parse(reader.ReadLine());
 
-            Logging.Info("edgesCount: " + edgesCount.ToString());
+            logger.Info("edgesCount: " + edgesCount.ToString());
 
             for (int i = 0; i < edgesCount; i++)
             {

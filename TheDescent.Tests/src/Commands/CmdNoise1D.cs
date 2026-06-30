@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using HarmonyLib.Tools;
 
 public class CmdNoise1D : CmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CmdNoise1D>();
+
     public override string[] GetCommands()
     {
         return new string[] { "noise1d" };
@@ -39,7 +42,7 @@ public class CmdNoise1D : CmdAbstract
             b.Save(@"noise1d.png", ImageFormat.Png);
         }
 
-        Logging.Info($"timer: {timer.ElapsedMilliseconds}ms");
+        logger.Info($"timer: {timer.ElapsedMilliseconds}ms");
     }
 
 }

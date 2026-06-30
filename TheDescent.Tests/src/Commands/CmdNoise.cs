@@ -5,6 +5,7 @@ using WorldGenerationEngineFinal;
 
 public class CmdNoise : CmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CmdNoise>();
 
     public override string[] GetCommands()
     {
@@ -37,7 +38,7 @@ public class CmdNoise : CmdAbstract
                     }
                 }
 
-                Logging.Info($"{100f * count / sqrSize:F1}% ({count:N0} / {sqrSize:N0})");
+                logger.Info($"{100f * count / sqrSize:F1}% ({count:N0} / {sqrSize:N0})");
                 b.Save("ignore/noise.png", ImageFormat.Png);
             }
         }
