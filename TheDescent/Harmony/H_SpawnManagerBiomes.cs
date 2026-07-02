@@ -5,7 +5,7 @@ using UnityEngine;
 [HarmonyPatch(typeof(SpawnManagerBiomes), "Update")]
 public class SpawnManagerBiomes_Update
 {
-    private static readonly Logging.Logger logger = Logging.CreateLogger<SpawnManagerBiomes_Update>();
+    private static readonly Logging.Logger logger = Logging.CreateLogger<SpawnManagerBiomes_Update>(LoggingLevel.INFO);
 
     private static SpawnManagerBiomes spawnManagerBiome;
 
