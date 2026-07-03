@@ -61,3 +61,20 @@ class H_ModConfig
         return false;
     }
 }
+
+// [HarmonyPatch(typeof(PathAbstractions.SearchDefinition))]
+// [HarmonyPatch(nameof(PathAbstractions.SearchDefinition.GetLocation))]
+// class H_PathAbstractions_SearchDefinition_GetLocation
+// {
+//     private static readonly Logging.Logger logger = Logging.CreateLogger<Harmony>();
+
+//     public static bool Prefix(ref PathAbstractions.AbstractedLocation __result, string _name, PathAbstractions.EAbstractedLocationType? _onlyLocationType = null, UserDataStorageType? _userDataHint = null)
+//     {
+//         __result = new PathAbstractions.AbstractedLocation();
+
+//         logger.Info($"name: {_name}, type: {Enum.GetName(_onlyLocationType.GetValueOrDefault(PathAbstractions.EAbstractedLocationType.None))}");
+
+//         return false;
+//     }
+// }
+

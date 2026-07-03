@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
+
 
 public class CmdCave : CmdAbstract
 {
@@ -21,10 +24,10 @@ public class CmdCave : CmdAbstract
         int prefabCount = worldSize / 5;
 
         var timer = ProfilingUtils.StartTimer();
-        var prefabs = PrefabLoader.LoadPrefabs().Values.ToList();
+        var prefabs = PrefabLoaderTest.LoadPrefabs().Values.ToList();
         var cachedPrefabs = new CavePrefabManager(worldSize);
         var rand = new Random(seed);
-        var heightMap = new RawHeightMap(worldSize, 128);
+        var heightMap = new HeightMapConstant(128, worldSize);
 
         cachedPrefabs.AddRandomPrefabs(rand, heightMap, prefabCount, prefabs);
 
@@ -38,6 +41,8 @@ public class CmdCave : CmdAbstract
 
         var cavemap = new CaveMap(worldSize);
         var localMinimas = new HashSet<CaveBlock>();
+
+        Directory.CreateDirectory("ignore");
 
         using (var b = new Bitmap(worldSize, worldSize))
         {

@@ -5,16 +5,19 @@ using System.Runtime.Serialization;
 using System.Reflection;
 using System.Xml;
 using System;
+using PrefabVolumes;
 
-public class PrefabLoader
+public class PrefabLoaderTest
 {
     private static readonly string userDataPath = @"C:\Users\menan\AppData\Roaming\7DaysToDie";
+
+    private static string LocalPrefabsDir => Path.Combine(userDataPath, "LocalPrefabs");
 
     public static Dictionary<string, PrefabData> LoadPrefabs()
     {
         var AllPrefabDatas = new Dictionary<string, PrefabData>();
 
-        foreach (var location in GetPrefabPaths())
+        foreach (var location in GetPrefabsLocations())
         {
             var prefabData = NewPrefabData(location);
 
@@ -29,7 +32,7 @@ public class PrefabLoader
         return AllPrefabDatas;
     }
 
-    private static List<PathAbstractions.AbstractedLocation> GetPrefabPaths(string directory)
+    private static List<PathAbstractions.AbstractedLocation> GetPrefabsLocations(string directory)
     {
         var paths = new List<PathAbstractions.AbstractedLocation>();
 
@@ -40,41 +43,42 @@ public class PrefabLoader
             if (Path.GetExtension(path) != ".xml")
                 continue;
 
-            var loc = new PathAbstractions.AbstractedLocation(
-                PathAbstractions.EAbstractedLocationType.UserDataPath,
-                Path.GetFileName(path),
-                path,
-                "",
-                false,
-                null
-            );
+            var loc = new PathAbstractions.AbstractedLocation();
+            var objloc = loc as object;
+            var bindingFlags = BindingFlags.Public | BindingFlags.Instance;
 
-            paths.Add(loc);
+            CaveUtils.SetField<PathAbstractions.AbstractedLocation>(objloc, "Type", PathAbstractions.EAbstractedLocationType.UserDataPath, bindingFlags);
+            CaveUtils.SetField<PathAbstractions.AbstractedLocation>(objloc, "Name", Path.GetFileName(path), bindingFlags);
+            CaveUtils.SetField<PathAbstractions.AbstractedLocation>(objloc, "Folder", Path.GetDirectoryName(path), bindingFlags);
+            CaveUtils.SetField<PathAbstractions.AbstractedLocation>(objloc, "Extension", Path.GetExtension(path), bindingFlags);
+            CaveUtils.SetField<PathAbstractions.AbstractedLocation>(objloc, "FileNameNoExtension", Path.GetFileNameWithoutExtension(path), bindingFlags);
+            CaveUtils.SetField<PathAbstractions.AbstractedLocation>(objloc, "IsFolder", false, bindingFlags);
+
+            paths.Add((PathAbstractions.AbstractedLocation)objloc);
         }
 
         foreach (var dir in Directory.GetDirectories(directory))
         {
-            paths.AddRange(GetPrefabPaths(dir));
+            paths.AddRange(GetPrefabsLocations(dir));
         }
 
         return paths;
     }
 
-    private static List<PathAbstractions.AbstractedLocation> GetPrefabPaths()
+    private static List<PathAbstractions.AbstractedLocation> GetPrefabsLocations()
     {
-        var prefabPaths = Path.Combine(userDataPath, "LocalPrefabs");
-        return GetPrefabPaths(prefabPaths);
+        return GetPrefabsLocations(LocalPrefabsDir);
     }
 
     private static PrefabData NewPrefabData(PathAbstractions.AbstractedLocation location)
     {
-        var prefabData = (PrefabData)FormatterServices.GetUninitializedObject(typeof(PrefabData));
-
         var properties = ReadXML(location.FullPath);
+        var prefabData = new PrefabData(location)
+        {
+            DuplicateRepeatDistance = ParsePropertyInt("DuplicateRepeatDistance", properties)
+        };
 
-        SetField(prefabData, "Name", location.Name);
-        SetField(prefabData, "DuplicateRepeatDistance", ParsePropertyInt("DuplicateRepeatDistance", properties));
-        SetField(prefabData, "POIMarkers", ParsePOIMarkers(properties));
+        ParsePOIMarkers(prefabData, properties);
 
         prefabData.location = location;
         prefabData.size = ParseVector(properties["PrefabSize"]);
@@ -132,12 +136,10 @@ public class PrefabLoader
         );
     }
 
-    private static List<PrefabVolumes.Marker> ParsePOIMarkers(Dictionary<string, string> properties)
+    private static void ParsePOIMarkers(PrefabData prefab, Dictionary<string, string> properties)
     {
-        var markers = new List<PrefabVolumes.Marker>();
-
         if (!properties.ContainsKey("POIMarkerSize"))
-            return markers;
+            return;
 
         var POIMarkerSize = properties["POIMarkerSize"].Split('#');
         var POIMarkerStart = properties["POIMarkerStart"].Split('#');
@@ -147,26 +149,25 @@ public class PrefabLoader
 
         for (int i = 0; i < POIMarkerSize.Length; i++)
         {
-            var marker = new PrefabVolumes.Marker();
+            var marker = new Marker
+            {
+                // groupName = POIMarkerGroup[i],
+                size = ParseVector(POIMarkerSize[i]),
+                startPos = ParseVector(POIMarkerStart[i]),
+                tags = FastTags<TagGroup.Poi>.Parse(POIMarkerTags[i].Replace(" ", ""))
+            };
 
-            marker.size = ParseVector(POIMarkerSize[i]);
-            marker.startPos = ParseVector(POIMarkerStart[i]);
-            // marker.groupName = POIMarkerGroup[i];
-            marker.tags = FastTags<TagGroup.Poi>.Parse(POIMarkerTags[i].Replace(" ", ""));
-
-            if (POIMarkerType.Length == POIMarkerSize.Length && Enum.TryParse<PrefabVolumes.Marker.MarkerTypes>(POIMarkerType[i], ignoreCase: true, out var result))
+            if (POIMarkerType.Length == POIMarkerSize.Length && Enum.TryParse<Marker.MarkerTypes>(POIMarkerType[i], ignoreCase: true, out var result))
             {
                 marker.markerType = result;
             }
             else
             {
-                marker.MarkerType = PrefabVolumes.Marker.MarkerTypes.None;
+                marker.MarkerType = Marker.MarkerTypes.None;
             }
 
-            markers.Add(marker);
+            prefab.POIMarkers.List.Add(marker);
         }
-
-        return markers;
     }
 
     private static Dictionary<string, string> ReadXML(string path)

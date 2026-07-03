@@ -182,10 +182,9 @@ public static class CaveUtils
         return true;
     }
 
-    public static void SetField<T>(object instance, string fieldName, object value)
+    public static void SetField<T>(object instance, string fieldName, object value, BindingFlags bindingAttrs = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic)
     {
-        var field = typeof(T).GetField(fieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-        field.SetValue(instance, value);
+        typeof(T).GetField(fieldName, bindingAttrs).SetValue(instance, value);
     }
 
     public static List<List<T>> SplitList<T>(List<T> parent, int count)
