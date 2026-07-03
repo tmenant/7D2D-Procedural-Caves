@@ -5,17 +5,19 @@ using System.Runtime.CompilerServices;
 using Unity.Collections;
 using WorldGenerationEngineFinal;
 
-public class RawHeightMap
+public class RawHeightMap : IRawHeightMap
 {
     private static readonly Logging.Logger logger = Logging.CreateLogger<RawHeightMap>();
 
     private readonly NativeArray<float> heightMap;
 
-    public readonly int worldSize;
+    private readonly int worldSize;
 
     public float MinHeight => heightMap.Min();
 
     public float MaxHeight => heightMap.Max();
+
+    public int WorldSize => worldSize;
 
     public RawHeightMap(string dtmPath, int worldSize)
     {

@@ -14,7 +14,7 @@ public class WorldDatas
 
     public readonly List<PrefabDataInstance> prefabs;
 
-    public readonly RawHeightMap heightMap;
+    public readonly IRawHeightMap heightMap;
 
     public readonly string name;
 

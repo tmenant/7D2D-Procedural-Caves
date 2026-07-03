@@ -272,7 +272,7 @@ public class CavePrefabManager
         return false;
     }
 
-    private bool TryPlacePrefab(Random rand, ref CavePrefab prefab, RawHeightMap heightMap)
+    private bool TryPlacePrefab(Random rand, ref CavePrefab prefab, IRawHeightMap heightMap)
     {
         int minDist = prefab.prefabDataInstance == null ? int.MaxValue : prefab.prefabDataInstance.prefab.DuplicateRepeatDistance;
         int overLapMargin = CaveConfig.overLapMargin;
@@ -291,7 +291,7 @@ public class CavePrefabManager
         return false;
     }
 
-    public void AddRandomPrefabs(Random rand, RawHeightMap heightMap, int targetCount, List<PrefabData> prefabs)
+    public void AddRandomPrefabs(Random rand, IRawHeightMap heightMap, int targetCount, List<PrefabData> prefabs)
     {
         logger.Info("Start POIs placement...");
 
@@ -309,7 +309,7 @@ public class CavePrefabManager
         logger.Info($"{PrefabCount} / {targetCount} prefabs added");
     }
 
-    public void AddRandomPrefabs(Random rand, RawHeightMap heightMap, int targetCount, int minMarkers = 4, int maxMarkers = 4)
+    public void AddRandomPrefabs(Random rand, IRawHeightMap heightMap, int targetCount, int minMarkers = 4, int maxMarkers = 4)
     {
         logger.Info("Start POIs placement...");
 
@@ -424,7 +424,7 @@ public class CavePrefabManager
         return prefabs.ToList();
     }
 
-    private int GetMinTerrainHeight(Vector3i position, Vector3i size, RawHeightMap heightMap)
+    private int GetMinTerrainHeight(Vector3i position, Vector3i size, IRawHeightMap heightMap)
     {
         int minHeight = int.MaxValue;
 
@@ -436,7 +436,7 @@ public class CavePrefabManager
             }
         }
 
-        var prefabsAbove = GetPrefabsAbove(position - CaveUtils.HalfWorldSize(heightMap.worldSize), size);
+        var prefabsAbove = GetPrefabsAbove(position - CaveUtils.HalfWorldSize(heightMap.WorldSize), size);
 
         if (prefabsAbove.Count > 0)
         {
@@ -487,7 +487,7 @@ public class CavePrefabManager
         return false;
     }
 
-    private PrefabDataInstance TrySpawnCavePrefab(PrefabData prefabData, Random rand, RawHeightMap heightMap)
+    private PrefabDataInstance TrySpawnCavePrefab(PrefabData prefabData, Random rand, IRawHeightMap heightMap)
     {
         int maxPlacementAttempts = 20;
 
@@ -517,7 +517,7 @@ public class CavePrefabManager
         return null;
     }
 
-    public void SpawnUnderGroundPrefabs(int count, Random rand, RawHeightMap heightMap)
+    public void SpawnUnderGroundPrefabs(int count, Random rand, IRawHeightMap heightMap)
     {
         var undergroundPrefabs = GetUndergroundPrefabs();
         var HalfWorldSize = CaveUtils.HalfWorldSize(worldSize);
@@ -549,7 +549,7 @@ public class CavePrefabManager
     /// <param name="count">The number of cave rooms to spawn</param>
     /// <param name="rand"></param>
     /// <param name="heightMap"></param>
-    public void SpawnCaveRooms(int count, Random rand, RawHeightMap heightMap)
+    public void SpawnCaveRooms(int count, Random rand, IRawHeightMap heightMap)
     {
         var roomSpawned = 0;
 

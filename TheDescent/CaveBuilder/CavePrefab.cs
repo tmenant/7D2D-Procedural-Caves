@@ -256,7 +256,7 @@ public class CavePrefab
         return result;
     }
 
-    public void SetRandomPosition(RawHeightMap heightMap, Random rand, int mapSize)
+    public void SetRandomPosition(IRawHeightMap heightMap, Random rand, int mapSize)
     {
         int offset = CaveConfig.radiationSize + CaveConfig.radiationZoneMargin;
 

@@ -23,7 +23,7 @@ public class CaveBuilder
 
     public CaveEntrancesPlanner caveEntrancesPlanner;
 
-    private RawHeightMap heightMap;
+    private IRawHeightMap heightMap;
 
     private PrefabManager PrefabManager => worldBuilder.PrefabManager;
 

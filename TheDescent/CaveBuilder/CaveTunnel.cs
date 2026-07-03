@@ -15,11 +15,11 @@ public class CaveTunnel
 
     private readonly System.Random random;
 
-    private readonly RawHeightMap heightMap;
+    private readonly IRawHeightMap heightMap;
 
     public CaveTunnel() { }
 
-    public CaveTunnel(GraphEdge edge, CavePrefabManager cachedPrefabs, RawHeightMap heightMap, int worldSize, int seed)
+    public CaveTunnel(GraphEdge edge, CavePrefabManager cachedPrefabs, IRawHeightMap heightMap, int worldSize, int seed)
     {
         CaveNoise.pathingNoise.SetSeed(seed);
 
@@ -177,7 +177,7 @@ public class CaveTunnel
             || cachedPrefabs.IntersectWithPrefab(caveBlock.ToVector3i()));
     }
 
-    public static IEnumerable<CaveBlock> CreateNaturalEntrance(Vector3i position, RawHeightMap heightMap)
+    public static IEnumerable<CaveBlock> CreateNaturalEntrance(Vector3i position, IRawHeightMap heightMap)
     {
         var entranceTunnel = new HashSet<CaveBlock>();
 
