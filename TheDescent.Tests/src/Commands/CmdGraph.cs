@@ -39,7 +39,7 @@ public class CmdGraph : CmdAbstract
 
             foreach (var node in prefab.nodes)
             {
-                voxels.Add(new Voxell(node.prefab.position + node.marker.start, node.marker.size, WaveFrontMaterial.Orange) { force = true });
+                voxels.Add(new Voxell(node.prefab.position + node.marker.startPos, node.marker.size, WaveFrontMaterial.Orange) { force = true });
             }
         }
 

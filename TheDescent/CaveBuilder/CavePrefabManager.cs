@@ -49,7 +49,7 @@ public class CavePrefabManager
         this.worldSize = worldDatas.size;
         this.UsedPrefabsWorld = worldDatas.prefabs;
 
-        var timer = new MicroStopwatch(true);
+        var timer = ProfilingUtils.StartTimer();
         var prefabLocations = PathAbstractions.PrefabsSearchPaths.GetAvailablePathsList(null, _ignoreDuplicateNames: true);
 
         for (int i = 0; i < prefabLocations.Count; i++)

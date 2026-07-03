@@ -129,7 +129,8 @@ public class CaveBuilder
 
         worldBuilder.SetTaskMessage("Start tunneling threads...");
 
-        var threads = new List<Thread>() {
+        var threads = new List<Thread>()
+        {
             StartRoomsThread(cavePrefabManager),
         };
 
@@ -242,7 +243,8 @@ public class CaveBuilder
         logger.Debug("Start tunneling threads...");
         yield return null;
 
-        var threads = new List<Thread>() {
+        var threads = new List<Thread>()
+        {
             StartRoomsThread(cavePrefabManager),
         };
 

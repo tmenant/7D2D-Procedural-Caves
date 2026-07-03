@@ -5,9 +5,7 @@ VisualStudioVersion = 17.5.320.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheDescent", ".\TheDescent\TheDescent.csproj", "{74E889C9-C67A-DAE2-CDBB-937B13C3A06A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TheDescent.Tests", "TheDescent.Tests", "{95D870C0-A071-193B-D3D8-0C4DD47693C0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cave-viewer", ".\TheDescent.Tests\cave-viewer.csproj", "{982E5B6D-2B5C-903C-1875-D559B96C16F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheDescent.Tests", ".\TheDescent.Tests\cave-viewer.csproj", "{982E5B6D-2B5C-903C-1875-D559B96C16F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using BumpKit;
 
 public class DrawingUtils
 {
@@ -162,22 +161,6 @@ public class DrawingUtils
         int a = (int)(start.A + (end.A - start.A) * factor);
 
         return Color.FromArgb(a, r, g, b);
-    }
-
-    public static void EncodeGif(string outputFilePath, string[] imageFilePaths, int delay = 1000)
-    {
-        using (var stream = new FileStream(outputFilePath, FileMode.OpenOrCreate))
-        {
-            using (var e = new GifEncoder(stream))
-            {
-                e.FrameDelay = new TimeSpan(0, 0, 0, 0, delay);
-
-                foreach (var path in imageFilePaths)
-                {
-                    e.AddFrame(Image.FromFile(path));
-                }
-            }
-        }
     }
 
 }

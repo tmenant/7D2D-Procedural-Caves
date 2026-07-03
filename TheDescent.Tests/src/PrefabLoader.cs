@@ -132,9 +132,9 @@ public class PrefabLoader
         );
     }
 
-    private static List<Prefab.Marker> ParsePOIMarkers(Dictionary<string, string> properties)
+    private static List<PrefabVolumes.Marker> ParsePOIMarkers(Dictionary<string, string> properties)
     {
-        var markers = new List<Prefab.Marker>();
+        var markers = new List<PrefabVolumes.Marker>();
 
         if (!properties.ContainsKey("POIMarkerSize"))
             return markers;
@@ -147,20 +147,20 @@ public class PrefabLoader
 
         for (int i = 0; i < POIMarkerSize.Length; i++)
         {
-            var marker = new Prefab.Marker();
+            var marker = new PrefabVolumes.Marker();
 
             marker.size = ParseVector(POIMarkerSize[i]);
-            marker.start = ParseVector(POIMarkerStart[i]);
+            marker.startPos = ParseVector(POIMarkerStart[i]);
             // marker.groupName = POIMarkerGroup[i];
             marker.tags = FastTags<TagGroup.Poi>.Parse(POIMarkerTags[i].Replace(" ", ""));
 
-            if (POIMarkerType.Length == POIMarkerSize.Length && Enum.TryParse<Prefab.Marker.MarkerTypes>(POIMarkerType[i], ignoreCase: true, out var result))
+            if (POIMarkerType.Length == POIMarkerSize.Length && Enum.TryParse<PrefabVolumes.Marker.MarkerTypes>(POIMarkerType[i], ignoreCase: true, out var result))
             {
                 marker.markerType = result;
             }
             else
             {
-                marker.MarkerType = Prefab.Marker.MarkerTypes.None;
+                marker.MarkerType = PrefabVolumes.Marker.MarkerTypes.None;
             }
 
             markers.Add(marker);

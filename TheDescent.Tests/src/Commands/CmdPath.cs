@@ -45,7 +45,7 @@ public class CmdPath : CmdAbstract
         var edge = new GraphEdge(node1, node2);
 
         logger.Info($"prefab   {node2.prefab.position}");
-        logger.Info($"start    {node2.marker.start}");
+        logger.Info($"start    {node2.marker.startPos}");
         logger.Info($"size     {node2.marker.size}");
         logger.Info($"result   {node2.position}\n");
 

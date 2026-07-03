@@ -3,6 +3,7 @@ using System.Linq;
 
 public class CmdBezier : CmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CmdBezier>();
 
     public override string[] GetCommands()
     {

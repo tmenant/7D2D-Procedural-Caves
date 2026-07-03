@@ -224,7 +224,7 @@ public class CavePrefab
         foreach (var marker in markers)
         {
             CaveUtils.Assert(marker != null, "null marker");
-            CaveUtils.Assert(marker.size != null, "null marker size");
+            CaveUtils.Assert(marker.size != Vector3i.zero, "null marker size");
 
             nodes.Add(new GraphNode(marker, this));
         }

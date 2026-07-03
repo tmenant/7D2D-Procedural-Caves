@@ -29,9 +29,7 @@ public static class Program
         var harmony = new HarmonyLib.Harmony(assembly.GetName().ToString());
         harmony.PatchAll(assembly);
 
-        var command = commands.Where(cmd => cmd.GetCommands()
-            .Contains(args[0]))
-            .FirstOrDefault();
+        var command = commands.FirstOrDefault(cmd => cmd.GetCommands().Contains(args[0]));
 
         if (command != null)
         {

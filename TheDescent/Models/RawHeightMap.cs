@@ -66,7 +66,8 @@ public class RawHeightMap
             return heightMap[index];
         }
 
-        logger.Warning($"worldsize: {worldSize}, pos: [{x}, {z}]");
+        // logger.Warning($"worldsize: {worldSize}, pos: [{x}, {z}]");
+
         return 0;
     }
 

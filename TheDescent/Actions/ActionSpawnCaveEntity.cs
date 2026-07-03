@@ -325,7 +325,7 @@ public class ActionSpawnCaveEntity : ActionSpawnEntity
     {
         newPoint = CaveSpawnManager.GetSpawnPositionNearPlayer(startPoint, minDistance);
 
-        return newPoint != null;
+        return newPoint != Vector3.zero;
     }
 
     public new Entity SpawnEntity(int spawnedEntityID, Entity target, Vector3 startPoint, float minDistance, float maxDistance, bool spawnInSafe, float yOffset = 0f)

@@ -28,18 +28,13 @@ public class WorldGenConsoleCmd : ConsoleCmdAbstract
             worldName = "Pregen06k01";
         }
 
-        GameManager.Instance.StartCoroutine(GenerateWorld(worldName));
-    }
-
-    public IEnumerator GenerateWorld(string worldName)
-    {
         var caveBuilder = new CaveBuilder();
         var worldDatas = new WorldDatas(worldName);
+        var coroutine = caveBuilder.GenerateCaveFromWorld(worldDatas);
 
         worldDatas.Debug();
 
-        yield return caveBuilder.GenerateCaveFromWorld(worldDatas);
+        GameManager.Instance.StartCoroutine(coroutine);
     }
-
 }
 

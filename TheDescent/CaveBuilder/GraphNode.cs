@@ -25,8 +25,8 @@ public class GraphNode
         this.prefab = prefab;
 
         CaveUtils.Assert(marker != null, $"null marker");
-        CaveUtils.Assert(marker.startPos != null, $"null marker start");
-        CaveUtils.Assert(marker.size != null, $"null marker size");
+        CaveUtils.Assert(marker.startPos != Vector3i.zero, $"null marker start");
+        CaveUtils.Assert(marker.size != Vector3i.zero, $"null marker size");
 
         NodeRadius = GetNodeRadius();
 

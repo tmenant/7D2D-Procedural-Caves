@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using HarmonyLib.Tools;
 
 public class CmdNoise1D : CmdAbstract
 {

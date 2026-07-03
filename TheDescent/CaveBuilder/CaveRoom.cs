@@ -42,7 +42,7 @@ public class CaveRoom
     {
         this.seed = seed;
         this.size = size;
-        offset = start == null ? Vector3i.zero : start;
+        offset = start == Vector3i.zero ? Vector3i.zero : start;
         rand = new Random(seed);
         map = new bool[size.x, size.y, size.z];
         markers = new List<CaveMarker>();

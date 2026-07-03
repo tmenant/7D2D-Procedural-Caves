@@ -98,7 +98,7 @@ public class CmdCave : CmdAbstract
 
             foreach (var marker in prefab.caveMarkers)
             {
-                voxels.Add(new Voxell(prefab.position + marker.start, marker.size, WaveFrontMaterial.Orange) { force = true });
+                voxels.Add(new Voxell(prefab.position + marker.startPos, marker.size, WaveFrontMaterial.Orange) { force = true });
             }
         }
 
