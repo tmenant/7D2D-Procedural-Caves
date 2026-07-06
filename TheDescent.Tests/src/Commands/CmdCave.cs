@@ -25,16 +25,16 @@ public class CmdCave : CmdAbstract
 
         var timer = ProfilingUtils.StartTimer();
         var prefabs = PrefabLoaderTest.LoadPrefabs().Values.ToList();
-        var cachedPrefabs = new CavePrefabManager(worldSize);
+        var cavePrefabManager = new CavePrefabManager(worldSize);
         var rand = new Random(seed);
         var heightMap = new HeightMapConstant(128, worldSize);
 
-        cachedPrefabs.AddRandomPrefabs(rand, heightMap, prefabCount, prefabs);
+        cavePrefabManager.AddRandomPrefabs(rand, heightMap, prefabCount, prefabs);
 
         logger.Info("Start solving graph...");
 
         var memoryBefore = GC.GetTotalMemory(true);
-        var graph = new Graph(cachedPrefabs.Prefabs, worldSize);
+        var graph = new Graph(cavePrefabManager.Prefabs, worldSize);
         var index = 0;
 
         object lockObject = new object();
@@ -54,7 +54,7 @@ public class CmdCave : CmdAbstract
                 {
                     logger.Info($"Cave tunneling: {100.0f * index++ / graph.Edges.Count:F0}% ({index} / {graph.Edges.Count})");
 
-                    var tunnel = new CaveTunnel(edge, cachedPrefabs, heightMap, worldSize, seed);
+                    var tunnel = new CaveTunnel(edge, cavePrefabManager, heightMap, worldSize, seed);
 
                     lock (lockObject)
                     {
@@ -68,12 +68,12 @@ public class CmdCave : CmdAbstract
                     }
                 });
 
-                DrawingUtils.DrawPrefabs(b, g, cachedPrefabs.Prefabs);
+                DrawingUtils.DrawPrefabs(b, g, cavePrefabManager.Prefabs);
                 b.Save(@"ignore/cave.png", ImageFormat.Png);
             }
         }
 
-        // cavemap.SetWater(cachedPrefabs, localMinimas);
+        // cavemap.SetWaterCoroutine(cavePrefabManager, localMinimas);
 
         logger.Info($"{cavemap.BlocksCount:N0} cave blocks generated ({cavemap.TunnelsCount} unique tunnels), timer={timer.ElapsedMilliseconds:N0}ms, memory={(GC.GetTotalMemory(true) - memoryBefore) / 1_048_576.0:N1}MB.");
         logger.Info($"{localMinimas.Count} local minimas");
@@ -97,7 +97,7 @@ public class CmdCave : CmdAbstract
             }
         }
 
-        foreach (var prefab in cachedPrefabs.Prefabs)
+        foreach (var prefab in cavePrefabManager.Prefabs)
         {
             voxels.Add(new Voxell(prefab.position, prefab.Size, WaveFrontMaterial.DarkGreen) { force = true });
 

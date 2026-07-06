@@ -1,0 +1,4 @@
+<Solution>
+    <Project Path="TheDescent.Tests/TheDescent.Tests.csproj" />
+    <Project Path="TheDescent/TheDescent.csproj" />
+</Solution>
