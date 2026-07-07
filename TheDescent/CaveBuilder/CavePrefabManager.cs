@@ -535,7 +535,6 @@ public class CavePrefabManager
             var cavePrefab = new CavePrefab(PrefabCount + 1, pdi, HalfWorldSize);
 
             AddPrefab(cavePrefab);
-            worldBuilder?.PrefabManager?.AddUsedPrefabWorld(-1, pdi);
 
             logger.Info($"cave prefab '{cavePrefab.PrefabName}' added at {cavePrefab.position}");
         }

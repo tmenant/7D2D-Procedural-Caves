@@ -300,6 +300,11 @@ public class CavePrefab
         return CaveUtils.Intersect3D(pos.x, pos.y, pos.z, position, Size);
     }
 
+    public bool IsUndergroundPrefab()
+    {
+        return Tags.Test_AnySet(CaveTags.tagUnderground);
+    }
+
     private List<Vector3i> GetBoundingPoints()
     {
         var points = new HashSet<Vector3i>();

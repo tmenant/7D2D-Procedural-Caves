@@ -25,7 +25,7 @@ public class WorldGenConsoleCmd : ConsoleCmdAbstract
 
         if (worldName == "")
         {
-            worldName = "Pregen06k01";
+            worldName = "Old Honihebu County";
         }
 
         var caveBuilder = new CaveBuilder();
@@ -34,7 +34,7 @@ public class WorldGenConsoleCmd : ConsoleCmdAbstract
 
         worldDatas.Debug();
 
-        GameManager.Instance.StartCoroutine(coroutine);
+        ThreadManager.StartCoroutine(coroutine);
     }
 }
 

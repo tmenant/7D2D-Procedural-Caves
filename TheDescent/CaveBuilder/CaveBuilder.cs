@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Xml;
 using System.Linq;
 using System.Threading;
 using System.Collections;
@@ -9,7 +10,6 @@ using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 
 using Random = System.Random;
-
 
 public class CaveBuilder
 {
@@ -396,11 +396,36 @@ public class CaveBuilder
     public void SaveCaveMap(WorldBuilder worldBuilder)
     {
         cavemap.Save($"{worldBuilder.WorldPath}/cavemap", worldBuilder.WorldSize);
+        SaveCavePrefabs(worldBuilder.WorldPath);
     }
 
     public void SaveCaveMap(WorldDatas worldDatas)
     {
         cavemap.Save($"{worldDatas.location.FullPath}/cavemap", worldDatas.size);
+        SaveCavePrefabs(worldDatas.location.FullPath);
     }
 
+    public void SaveCavePrefabs(string worldPath)
+    {
+        var document = new XmlDocument();
+        var root = document.AddXmlElement("prefabs");
+
+        foreach (var cavePrefab in cavePrefabManager.Prefabs)
+        {
+            if (cavePrefab.IsUndergroundPrefab())
+            {
+                var xmlPrefab = root.AddXmlElement("decoration");
+                var worldPos = cavePrefab.position - CaveUtils.HalfWorldSize(worldSize);
+
+                xmlPrefab.SetAttribute("type", "model");
+                xmlPrefab.SetAttribute("name", cavePrefab.PrefabName);
+                xmlPrefab.SetAttribute("position", worldPos.ToString());
+                xmlPrefab.SetAttribute("rotation", cavePrefab.rotation.ToString());
+            }
+        }
+
+        document.Save($"{worldPath}/cavemap/prefabs.xml");
+
+        logger.Info($"{root.ChildNodes.Count} cave prefabs saved");
+    }
 }
