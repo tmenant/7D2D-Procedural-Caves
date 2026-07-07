@@ -9,6 +9,8 @@ xuiCavePreviewDesc,Switch between vanilla preview and cave preview,Affiche l'ape
 xuiCavePreview,Preview type,Type d'aperçu,Тип предпросмотра
 xuiTerrainOffsetDesc,Increase vanilla terrain height,Augmente la profondeur de base du terrain,Увеличить высоту ванильного ландшафта
 xuiTerrainOffset,Terrain offset,Décalage du terrain,Смещение ландшафта
+xuiCaveEditor,Cave Editor,Editeur de grottes,
+xuiCaveFeatures,Cave Settings,Paramètres de grottes
 crystalCollection,Rare Gems collection,Collection de pierre précieuses,Коллекция редких драгоценных камней
 crystal01,Ruby,Rubis,Рубин
 crystal02,Amethyst,Améthyste,Аметист

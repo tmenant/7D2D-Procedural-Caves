@@ -33,4 +33,76 @@
 
     </insertAfter>
 
+    <insertAfter xpath="/windows/window[@name='editingTools']//pagingheader_button[@name='worldEditor']">
+        <pagingheader_button max_width="300" name="caveEditor" text_key="xuiCaveEditor" />
+    </insertAfter>
+
+    <append xpath="/windows">
+
+        <window name="caveEditor" anchor="Top" pos="0,-88" width="1800" height="670" controller="EditingToolsCaveEditor, TheDescent" cursor_area="true">
+
+            <rect name="settings" pos="-900,-90" width="1000">
+
+                <rect name="general" pos="0,0" height="240" controller="WorldList" clear_searchtext_on_open="true">
+                    <rect depth="4" name="searchControls" height="40">
+                        <captionedtextbox width="300" height="40" />
+                        <pager name="pager" pos="${parentinnerwidth-200},0" width="200" height="40" contents_parent="content" show_max_page="true" separator=" / " />
+                    </rect>
+
+                    <world_list_header name="listheader" depth="2" height="40" pos="0,-50" />
+                    <grid name="list" depth="2" rows="7" cols="1" pos="0,-90" cell_height="41" repeat_content="true" arrangement="vertical">
+                        <world_list_entry />
+                    </grid>
+                </rect>
+
+                <rect name="mapFeatures" pos="0,-380" height="290">
+                    <headerbox height="40" text_key="xuiCaveFeatures" font_size="30" backcolor="228,18,21,128" bordercolor="228,18,21,255" textcolor="[white]" />
+
+                    <rect name="content" pos="0,-39" height="${parentinnerheight-40}" depth="1" padding="20">
+
+                        <boxbg depth="-1" backcolor="16,16,16,255" bordersprite="menu_empty2px" bordercolor="64,64,64,255" />
+
+                        <grid rows="4" cell_height="44" arrangement="vertical">
+
+                            <rect width="440" height="36">
+                                <rwg_label text_key="xuiWorldSeed" />
+                                <textfield name="caveSeed" pos="193,0" width="${parentinnerwidth-155-76}" height="${parentinnerheight}" character_limit="20" bordercolor="64,64,64,255" />
+                            </rect>
+
+                            <rect width="440" height="36">
+                                <rwg_label tooltip_key="xuiCaveNetworksDesc" text_key="xuiCaveNetworks" />
+                                <rwg_combo name="caveNetworks" type="ComboBoxEnum`1[WorldGenerationEngineFinal.WorldBuilder+GenerationSelections]" localization_prefix="xuiWorldGeneration" />
+                            </rect>
+
+                            <rect width="440" height="36">
+                                <rwg_label tooltip_key="xuiCaveEntrancesDesc" text_key="xuiCaveEntrances" />
+                                <rwg_combo name="caveEntrances" type="ComboBoxEnum`1[WorldGenerationEngineFinal.WorldBuilder+GenerationSelections]" localization_prefix="xuiWorldGeneration" />
+                            </rect>
+
+                            <rect width="440" height="36">
+                                <rwg_label tooltip_key="xuiCaveWaterDesc" text_key="xuiCaveWater" />
+                                <rwg_combo name="caveWater" type="ComboBoxEnum`1[WorldGenerationEngineFinal.WorldBuilder+GenerationSelections]" localization_prefix="xuiWorldGeneration" />
+                            </rect>
+
+                        </grid>
+                    </rect>
+                </rect>
+            </rect>
+
+            <rect name="previewArea" pos="120,-90" width="780">
+                <headerbox height="40" text_key="xuiRwgEditorPreview" font_size="30" backcolor="228,18,21,128" bordercolor="228,18,21,255" textcolor="[white]" />
+                <boxbg depth="-1" backcolor="16,16,16,255" bordersprite="menu_empty2px" bordercolor="64,64,64,255" />
+            </rect>
+
+            <rect name="buttons" pos="-900,0" anchor_bottom="#cam,0,30" anchor_top="#cam,0,80">
+                <labeledglyphbutton name="btnBack" pos="0,0" width="200" height="50" font_size="32" caption_key="xuiBack" upper_case="true" action="GUI Cancel" /> <!-- enabled="{% !isgenerating }" -->
+                <labeledbutton name="btnDataManagement" pos="350,0" width="200" height="50" font_size="32" caption_key="xuiDmManageSaves" upper_case="true" /> <!-- enabled="{% !isgenerating }" -->
+                <labeledbutton name="generate" pos="700,0" width="200" height="50" font_size="32" caption_key="xuiGenerateWorld" upper_case="true" /> <!-- enabled="{% countynamevalid }" -->
+                <labeledbutton name="btnNewGame" pos="1050,0" width="200" height="50" font_size="32" caption_key="xuiNewGame" upper_case="true" /> <!-- enabled="{% canstartnewgame }" -->
+            </rect>
+
+        </window>
+
+    </append>
+
 </configs>
