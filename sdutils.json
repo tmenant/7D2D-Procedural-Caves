@@ -32,6 +32,10 @@
         {
             "world": "Old Bocera Moutains",
             "save": "Caves"
+        },
+        {
+            "world": "Pregen06k01",
+            "save": "Caves"
         }
     ]
 }

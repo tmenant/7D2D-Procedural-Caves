@@ -154,8 +154,6 @@ public class StreetTileData
 
     public bool overlapsRadiation = false;
 
-    public bool HasPrefabs = false;
-
     public bool ContainsRoad = false;
 
     public StreetTileData(Vector2i position, int streetTileMapSize)
@@ -163,5 +161,21 @@ public class StreetTileData
         this.gridPosition = position;
         this.worldPosition = gridPosition * 150;
         this.overlapsRadiation = position.x < 1 || position.x >= streetTileMapSize - 1 || position.y < 1 || position.y >= streetTileMapSize - 1;
+    }
+
+    public bool HasPrefabs(IEnumerable<PrefabDataInstance> prefabs)
+    {
+        var worldPos = new Vector3i(worldPosition.x, 0, worldPosition.y);
+        var tileSize = new Vector3i(150, 0, 150);
+
+        foreach (var prefab in prefabs)
+        {
+            if (CaveUtils.OverLaps2D(worldPos, tileSize, prefab.boundingBoxPosition, prefab.boundingBoxSize))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

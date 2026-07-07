@@ -1,10 +1,10 @@
-
-using System.Collections;
 using System.Collections.Generic;
 
 
 public class WorldGenConsoleCmd : ConsoleCmdAbstract
 {
+    private static readonly Logging.Logger logger = Logging.CreateLogger<WorldGenConsoleCmd>();
+
     public override bool AllowedInMainMenu => true;
 
     public override string[] getCommands()
@@ -19,22 +19,20 @@ public class WorldGenConsoleCmd : ConsoleCmdAbstract
 
     public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
     {
-        Log.Out("[WorldGenConsoleCmd] cave generation started.");
+        string worldName = _params.Count > 1 ? _params[1] : "";
 
-        var worldName = string.Join(" ", _params);
-
-        if (worldName == "")
+        if (string.IsNullOrEmpty(worldName))
         {
-            worldName = "Old Honihebu County";
+            logger.Warning("No world name was provided");
+            return;
         }
 
         var caveBuilder = new CaveBuilder();
         var worldDatas = new WorldDatas(worldName);
-        var coroutine = caveBuilder.GenerateCaveFromWorld(worldDatas);
 
         worldDatas.Debug();
 
-        ThreadManager.StartCoroutine(coroutine);
+        ThreadManager.StartCoroutine(caveBuilder.GenerateCaveFromWorld(worldDatas));
     }
 }
 

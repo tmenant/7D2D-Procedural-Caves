@@ -1,12 +1,12 @@
-/*
-    refactored WildernessPlanner, allowing more control on cave entrances placement
-*/
-
 using System.Collections.Generic;
 using WorldGenerationEngineFinal;
 using System.Linq;
 
 
+/// <summary>
+/// Handles the planning, positioning, and configuration of cave entrances
+/// within the environment or terrain generation system.
+/// </summary>
 public class CaveEntrancesPlanner
 {
     private GameRandom gameRandom;
@@ -54,7 +54,8 @@ public class CaveEntrancesPlanner
 
         foreach (var tile in worldDatas.GetStreetTiles())
         {
-            if (tile.HasPrefabs) continue;
+            if (tile.ContainsRoad || tile.HasPrefabs(worldDatas.prefabs))
+                continue;
 
             var center = tile.worldPositionCenter;
             center.x += gameRandom.Next(-20, 20);

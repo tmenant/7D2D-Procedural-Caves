@@ -202,6 +202,8 @@ public class CaveBuilder
 
     public IEnumerator GenerateCaveFromWorld(WorldDatas worldDatas)
     {
+        logger.Info($"cave generation started for world '{worldDatas.name}'");
+
         var timer = ProfilingUtils.StartTimer();
         var memoryBefore = GC.GetTotalMemory(true);
 
