@@ -96,9 +96,8 @@
 
             <rect name="buttons" pos="-900,0" anchor_bottom="#cam,0,30" anchor_top="#cam,0,80">
                 <labeledglyphbutton name="btnBack" pos="0,0" width="200" height="50" font_size="32" caption_key="xuiBack" upper_case="true" action="GUI Cancel" /> <!-- enabled="{% !isgenerating }" -->
-                <labeledbutton name="btnDataManagement" pos="350,0" width="200" height="50" font_size="32" caption_key="xuiDmManageSaves" upper_case="true" /> <!-- enabled="{% !isgenerating }" -->
-                <labeledbutton name="generate" pos="700,0" width="200" height="50" font_size="32" caption_key="xuiGenerateWorld" upper_case="true" /> <!-- enabled="{% countynamevalid }" -->
-                <labeledbutton name="btnNewGame" pos="1050,0" width="200" height="50" font_size="32" caption_key="xuiNewGame" upper_case="true" /> <!-- enabled="{% canstartnewgame }" -->
+                <labeledbutton name="btnGenerate" pos="800,0" width="200" height="50" font_size="32" caption_key="xuiGenerateCaves" upper_case="true" /> <!-- enabled="{% countynamevalid }" -->
+                <labeledbutton name="btnDelete" pos="500,0" width="200" height="50" font_size="32" caption_key="xuiDeleteCaves" upper_case="true" /> <!-- enabled="{% countynamevalid }" -->
             </rect>
 
         </window>

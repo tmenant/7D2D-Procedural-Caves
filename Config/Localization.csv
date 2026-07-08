@@ -11,6 +11,8 @@ xuiTerrainOffsetDesc,Increase vanilla terrain height,Augmente la profondeur de b
 xuiTerrainOffset,Terrain offset,Décalage du terrain,Смещение ландшафта
 xuiCaveEditor,Cave Editor,Editeur de grottes,
 xuiCaveFeatures,Cave Settings,Paramètres de grottes
+xuiGenerateCaves,Generate Caves,Générer Grottes
+xuiDeleteCaves,Delete Caves,Supprimer Grottes
 crystalCollection,Rare Gems collection,Collection de pierre précieuses,Коллекция редких драгоценных камней
 crystal01,Ruby,Rubis,Рубин
 crystal02,Amethyst,Améthyste,Аметист
