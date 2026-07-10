@@ -2,11 +2,14 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using WorldGenerationEngineFinal;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using System.Threading;
 
 
 public class CavePrefabManager
 {
-    private static readonly Logging.Logger logger = Logging.CreateLogger<CavePrefabManager>();
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CavePrefabManager>(LoggingLevel.INFO);
 
     private static readonly HashSet<CavePrefab> emptyPrefabsHashset = new HashSet<CavePrefab>();
 
@@ -654,19 +657,20 @@ public class CavePrefabManager
     /// </summary>
     public void AddSurfacePrefabs(IEnumerable<PrefabDataInstance> prefabs)
     {
-        var prefabClusters = new Dictionary<string, List<BoundingBox>>();
+        var prefabClusters = new ConcurrentDictionary<string, Lazy<List<BoundingBox>>>();
         var halfWorldSize = CaveUtils.HalfWorldSize(worldSize);
+        var objLock = new object();
 
-        foreach (var pdi in prefabs)
+        Parallel.ForEach(prefabs, pdi =>
         {
             if (pdi.prefab.Tags.Test_AnySet(CaveTags.tagCave))
-                continue;
+                return;
 
-            if (!prefabClusters.TryGetValue(pdi.prefab.Name, out var clusters))
-            {
-                clusters = BlockClusterizer.Clusterize(pdi);
-                prefabClusters[pdi.prefab.Name] = clusters;
-            }
+            var lazyClusters = prefabClusters.GetOrAdd(pdi.prefab.Name, name =>
+                new Lazy<List<BoundingBox>>(() => BlockClusterizer.Clusterize(pdi), LazyThreadSafetyMode.ExecutionAndPublication)
+            );
+
+            var clusters = lazyClusters.Value;
 
             foreach (var cluster in clusters)
             {
@@ -674,10 +678,13 @@ public class CavePrefabManager
                 var rectangle = cluster.Transform(position, pdi.rotation, pdi.prefab.size);
                 var cavePrefab = new CavePrefab(rectangle) { isCluster = true };
 
-                AddPrefab(cavePrefab);
+                lock (objLock)
+                {
+                    AddPrefab(cavePrefab);
+                }
 
-                logger.Info($"add cluster ({pdi.prefab.Name}), position: {rectangle.start}, rotation: {pdi.rotation}, size: {rectangle.size}");
+                logger.Debug($"add cluster ({pdi.prefab.Name}), position: {rectangle.start}, rotation: {pdi.rotation}, size: {rectangle.size}");
             }
-        }
+        });
     }
 }
