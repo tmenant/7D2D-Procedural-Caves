@@ -44,7 +44,7 @@ public class CavePrefabManager
         this.UsedPrefabsWorld = new List<PrefabDataInstance>();
     }
 
-    public CavePrefabManager(WorldDatas worldDatas)
+    public CavePrefabManager(WorldData worldDatas)
     {
         this.worldSize = worldDatas.size;
         this.UsedPrefabsWorld = worldDatas.prefabs;

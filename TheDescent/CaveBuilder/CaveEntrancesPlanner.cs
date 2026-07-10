@@ -46,7 +46,7 @@ public class CaveEntrancesPlanner
         }
     }
 
-    public void SpawnNaturalEntrances(WorldDatas worldDatas)
+    public void SpawnNaturalEntrances(WorldData worldDatas)
     {
         gameRandom = GameRandomManager.Instance.CreateGameRandom(worldDatas.seed);
 

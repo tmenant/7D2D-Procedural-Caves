@@ -1,3 +1,6 @@
+using System.Collections;
+using System.IO;
+using UnityEngine;
 using WorldListEntry = XUiC_WorldList.WorldListEntry;
 
 public class XUiC_EditingToolsCaveEditor : XUiC_EditingToolsDialogBase
@@ -8,11 +11,16 @@ public class XUiC_EditingToolsCaveEditor : XUiC_EditingToolsDialogBase
 
     private WorldListEntry selectedWorldEntry = null;
 
+    XUiC_WorldList worldListController;
+
+    private string WorldName => selectedWorldEntry?.Location.Name;
+
     public override void Init()
     {
         base.Init();
 
-        GetChildByType<XUiC_WorldList>().SelectionChanged += WorldListController_SelectionChanged;
+        worldListController = GetChildByType<XUiC_WorldList>();
+        worldListController.SelectionChanged += WorldListController_SelectionChanged;
 
         GetChildById("btnGenerate").OnPress += ButtonGenerate_OnPress;
         GetChildById("btnDelete").OnPress += ButtonDelete_OnPress;
@@ -25,11 +33,58 @@ public class XUiC_EditingToolsCaveEditor : XUiC_EditingToolsDialogBase
 
     private void ButtonGenerate_OnPress(XUiController _sender, int _mouseButton)
     {
-        logger.Info($"ButtonGenerate_OnPress: '{selectedWorldEntry?.Location.Name}'");
+        if (selectedWorldEntry == null)
+            return;
+
+        xui.StartCoroutine(Coroutine());
+    }
+
+    private IEnumerator Coroutine()
+    {
+        XUiC_ProgressWindow.Open(LocalPlayerUI.primaryUI, "Generating Caves...", null, _modal: false, _notEscClosable: true, _useShadow: true);
+
+        var caveBuilder = new CaveBuilder();
+
+        yield return caveBuilder.GenerateCaveFromWorld(selectedWorldEntry.Location);
+
+        XUiC_ProgressWindow.Close(LocalPlayerUI.primaryUI);
+
+        worldListController.RefreshView();
     }
 
     private void ButtonDelete_OnPress(XUiController _sender, int _mouseButton)
     {
-        logger.Info($"ButtonDelete_OnPress: '{selectedWorldEntry?.Location.Name}'");
+        if (selectedWorldEntry == null)
+            return;
+
+        XUiC_MessageBoxWindowGroup.ShowCustom(
+            xui,
+            Localization.Get("xuiDeleteSaveGame"),
+            string.Format(Localization.Get("xuiSavegameDeleteConfirmation"), WorldName),
+            "_icon",
+            DeleteConfirmationHandler,
+            _openMainMenuOnClose: false,
+            _modal: false
+        );
+    }
+
+    private void DeleteConfirmationHandler(XUiC_MessageBoxWindowGroup _box)
+    {
+        _box.Buttons[0].DefaultConfirm("btnConfirm", DeleteSelectedCaves, _enabled: true, 0f, 1.5f);
+        _box.Buttons[2].DefaultCancel("xuiCancel", () =>
+        {
+        });
+    }
+
+    private void DeleteSelectedCaves()
+    {
+        var cavemapPath = Path.Combine(selectedWorldEntry?.Location.FullPath, "cavemap");
+
+        if (Directory.Exists(cavemapPath))
+        {
+            Directory.Delete(cavemapPath, true);
+        }
+
+        worldListController.RefreshView();
     }
 }

@@ -1,12 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
 
-public class WorldDatas
+public class WorldData
 {
-    private static readonly Logging.Logger logger = Logging.CreateLogger<WorldDatas>();
+    private static readonly Logging.Logger logger = Logging.CreateLogger<WorldData>();
 
     public readonly PathAbstractions.AbstractedLocation location;
 
@@ -34,7 +33,7 @@ public class WorldDatas
 
     public string splat4Path => Path.Combine(location.FullPath, "splat4.png");
 
-    public WorldDatas(string worldName)
+    public WorldData(string worldName)
     {
         this.name = worldName;
         this.location = PathAbstractions.WorldsSearchPaths.GetLocation(worldName);
@@ -47,23 +46,36 @@ public class WorldDatas
         this.heightMap = new RawHeightMap(dtmPath, size);
     }
 
+    public WorldData(PathAbstractions.AbstractedLocation worldLocation)
+    {
+        this.name = worldLocation.Name;
+        this.location = worldLocation;
+        this.worldInfo = GameUtils.WorldInfo.LoadWorldInfo(location);
+        this.size = worldInfo.WorldSize.x;
+        this.seed = GetWorldSeed();
+        this.roadMap = ReadTexture(splat3Path);
+        this.waterMap = ReadTexture(splat4Path);
+        this.prefabs = PrefabLoader.LoadPrefabs(prefabsPath).ToList();
+        this.heightMap = new RawHeightMap(dtmPath, size);
+    }
+
     private bool[] ReadTexture(string path)
     {
-        var result = new bool[size * size];
-        var texture = TextureUtils.LoadTexture(path);
-        var pixelCount = 0;
+        var texture = PNGFile.Load(path);
+        int totalPixels = size * size;
+        var result = new bool[totalPixels];
 
-        for (int x = 0; x < size; x++)
+        int pixelCount = 0;
+
+        for (int i = 0; i < totalPixels; i++)
         {
-            for (int y = 0; y < size; y++)
-            {
-                var pixel = texture.GetPixel(x, y);
-                var colorSum = pixel.r + pixel.g + pixel.b;
+            var pixel = texture.pixels[i];
 
-                result[x + y * size] = colorSum > 0;
+            bool hasColor = (pixel.r | pixel.g | pixel.b) > 0;
 
-                if (colorSum > 0) pixelCount++;
-            }
+            result[i] = hasColor;
+
+            if (hasColor) pixelCount++;
         }
 
         logger.Debug($"{pixelCount} pixels for '{path}'");

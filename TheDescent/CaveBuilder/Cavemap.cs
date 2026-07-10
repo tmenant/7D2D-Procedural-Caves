@@ -236,7 +236,7 @@ public class CaveMap
         return waterPositions;
     }
 
-    public void SetWaterCoroutine(CavePrefabManager cachedPrefabs, WorldBuilder worldBuilder, HashSet<CaveBlock> localMinimas)
+    public void GenerateWater(CavePrefabManager cachedPrefabs, WorldBuilder worldBuilder, HashSet<CaveBlock> localMinimas)
     {
         if (CaveConfig.caveWater == WorldBuilder.GenerationSelections.None)
         {
