@@ -5,7 +5,7 @@ using WorldGenerationEngineFinal;
 
 
 [HarmonyPatch(typeof(WorldBuilder), "GenerateTask")]
-public class WorldBuilder_GenerateData
+public class H_WorldBuilder_GenerateData
 {
     private static WorldBuilder worldBuilder;
 
@@ -13,7 +13,7 @@ public class WorldBuilder_GenerateData
 
     public static bool Prefix(WorldBuilder __instance)
     {
-        if (!CaveConfig.generateCaves)
+        if (!H_XUiC_WorldGenerationWindow.caveSettings.GenerateCaves)
         {
             return true;
         }
@@ -28,9 +28,9 @@ public class WorldBuilder_GenerateData
 
     public static void GenerateTask()
     {
-        PatchWaterHeight();
+        caveBuilder = new CaveBuilder(worldBuilder, H_XUiC_WorldGenerationWindow.caveSettings);
 
-        caveBuilder = new CaveBuilder(worldBuilder);
+        PatchWaterHeight();
 
         worldBuilder.GenerateTerrain();
         bool hasPOIs = worldBuilder.Towns != WorldBuilder.GenerationSelections.None || worldBuilder.Wilderness != WorldBuilder.GenerationSelections.None;
@@ -137,7 +137,7 @@ public class WorldBuilder_GenerateData
 
     private static float ClampHeight(float height)
     {
-        return CaveConfig.terrainOffset + (255f - CaveConfig.terrainOffset) * height / 255f;
+        return caveBuilder.settings.terrainOffset + (255f - caveBuilder.settings.terrainOffset) * height / 255f;
     }
 
     private static void PatchWaterHeight()
@@ -190,10 +190,10 @@ public static class WorldBuilder_serializeRawHeightmap
 {
     public static bool Prefix()
     {
-        if (CaveConfig.generateCaves)
+        if (H_XUiC_WorldGenerationWindow.caveSettings.GenerateCaves)
         {
-            WorldBuilder_GenerateData.SaveCaveMap();
-            WorldBuilder_GenerateData.Cleanup();
+            H_WorldBuilder_GenerateData.SaveCaveMap();
+            H_WorldBuilder_GenerateData.Cleanup();
         }
 
         return true;

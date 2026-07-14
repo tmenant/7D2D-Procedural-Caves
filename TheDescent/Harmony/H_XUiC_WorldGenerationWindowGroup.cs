@@ -1,71 +1,46 @@
 using HarmonyLib;
 using WorldGenerationEngineFinal;
 
+
+[HarmonyPatch]
 public class H_XUiC_WorldGenerationWindow
 {
-    public static XUiC_ComboBoxInt terrainOffset;
+    public static readonly CaveBuilder.Settings caveSettings = new CaveBuilder.Settings();
 
-    public static XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections> caveNetworks;
+    private static XUiC_ComboBoxInt terrainOffset;
 
-    public static XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections> caveEntrances;
+    private static XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections> caveNetworks;
 
-    public static XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections> caveWater;
+    private static XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections> caveEntrances;
 
-    public static int TerrainOffset => (int)terrainOffset.Value;
+    private static XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections> caveWater;
 
-    public static WorldBuilder.GenerationSelections CaveNetworks => caveNetworks.Value;
-
-    public static WorldBuilder.GenerationSelections CaveEntrances => caveEntrances.Value;
-
-    public static WorldBuilder.GenerationSelections CaveWater => caveWater.Value;
-}
-
-
-[HarmonyPatch(typeof(XUiC_WorldGenerationWindow), "OnOpen")]
-public class XUiC_WorldGenerationWindow_OnOpen
-{
-    public static void Postfix(XUiC_WorldGenerationWindow __instance)
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(XUiC_WorldGenerationWindow), "OnOpen")]
+    public static void OnOpen_Postfix(XUiC_WorldGenerationWindow __instance)
     {
-        if ((H_XUiC_WorldGenerationWindow.terrainOffset = __instance.GetChildById("terrainOffset") as XUiC_ComboBoxInt) != null)
-        {
-            H_XUiC_WorldGenerationWindow.terrainOffset.Value = (int)CaveConfig.terrainOffset;
-        }
+        if (!(__instance.ViewComponent is XUiV_Window))
+            return;
 
-        if ((H_XUiC_WorldGenerationWindow.caveNetworks = __instance.GetChildById("caveNetworks") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>) != null)
-        {
-            H_XUiC_WorldGenerationWindow.caveNetworks.Value = WorldBuilder.GenerationSelections.Default;
-        }
+        terrainOffset = __instance.GetChildById("terrainOffset") as XUiC_ComboBoxInt;
+        caveNetworks = __instance.GetChildById("caveNetworks") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>;
+        caveEntrances = __instance.GetChildById("caveEntrances") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>;
+        caveWater = __instance.GetChildById("caveWater") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>;
 
-        if ((H_XUiC_WorldGenerationWindow.caveEntrances = __instance.GetChildById("caveEntrances") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>) != null)
-        {
-            H_XUiC_WorldGenerationWindow.caveEntrances.Value = WorldBuilder.GenerationSelections.Default;
-        }
-
-        if ((H_XUiC_WorldGenerationWindow.caveWater = __instance.GetChildById("caveWater") as XUiC_ComboBoxEnum<WorldBuilder.GenerationSelections>) != null)
-        {
-            H_XUiC_WorldGenerationWindow.caveWater.Value = WorldBuilder.GenerationSelections.Default;
-        }
+        terrainOffset.Value = (int)caveSettings.terrainOffset;
+        caveNetworks.Value = caveSettings.caveNetworks;
+        caveEntrances.Value = caveSettings.caveEntrances;
+        caveWater.Value = caveSettings.caveWater;
     }
-}
 
-
-[HarmonyPatch(typeof(XUiC_WorldGenerationWindow), "GenerateButton_OnPressed")]
-public class XUiC_WorldGenerationWindow_GenerateButton_OnPressed
-{
-    private static readonly Logging.Logger logger = Logging.CreateLogger<XUiC_WorldGenerationWindow_GenerateButton_OnPressed>();
-
-    public static bool Prefix(XUiController _sender, int _mouseButton)
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(XUiC_WorldGenerationWindow), "GenerateButton_OnPressed")]
+    public static bool GenerateButton_OnPressed_Prefix(XUiController _sender, int _mouseButton, XUiC_WorldGenerationWindow __instance)
     {
-        CaveConfig.terrainOffset = H_XUiC_WorldGenerationWindow.TerrainOffset;
-        CaveConfig.caveNetworks = H_XUiC_WorldGenerationWindow.CaveNetworks;
-        CaveConfig.caveEntrances = H_XUiC_WorldGenerationWindow.CaveEntrances;
-        CaveConfig.caveWater = H_XUiC_WorldGenerationWindow.CaveWater;
-
-        CaveConfig.generateWater = CaveConfig.caveWater != WorldBuilder.GenerationSelections.None;
-        CaveConfig.generateCaves = CaveConfig.caveNetworks != WorldBuilder.GenerationSelections.None;
-
-        logger.Info($"generateWater: {CaveConfig.generateWater}");
-        logger.Info($"terrainOffset: {CaveConfig.terrainOffset}");
+        caveSettings.terrainOffset = terrainOffset.Value;
+        caveSettings.caveNetworks = caveNetworks.Value;
+        caveSettings.caveEntrances = caveEntrances.Value;
+        caveSettings.caveWater = caveWater.Value;
 
         return true;
     }

@@ -236,17 +236,12 @@ public class CaveMap
         return waterPositions;
     }
 
-    public void GenerateWater(CavePrefabManager cachedPrefabs, WorldBuilder worldBuilder, HashSet<CaveBlock> localMinimas)
+    public void GenerateWater(CavePrefabManager cachedPrefabs, WorldBuilder worldBuilder, HashSet<CaveBlock> localMinimas, WorldBuilder.GenerationSelections waterConfig)
     {
-        if (CaveConfig.caveWater == WorldBuilder.GenerationSelections.None)
-        {
-            return;
-        }
-
         int index = 0;
         int count = 0;
 
-        var waterNoise = new WaterNoise(worldBuilder.Seed, CaveConfig.caveWater);
+        var waterNoise = new WaterNoise(worldBuilder.Seed, waterConfig);
 
         foreach (var waterStart in localMinimas)
         {

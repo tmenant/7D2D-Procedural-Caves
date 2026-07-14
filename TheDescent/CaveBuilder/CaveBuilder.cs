@@ -13,6 +13,21 @@ using System.Threading.Tasks;
 
 public class CaveBuilder
 {
+    public class Settings
+    {
+        public bool GenerateWater => caveWater != WorldBuilder.GenerationSelections.None;
+
+        public bool GenerateCaves => caveNetworks != WorldBuilder.GenerationSelections.None;
+
+        public float terrainOffset = 50;
+
+        public WorldBuilder.GenerationSelections caveNetworks = WorldBuilder.GenerationSelections.Default;
+
+        public WorldBuilder.GenerationSelections caveEntrances = WorldBuilder.GenerationSelections.Default;
+
+        public WorldBuilder.GenerationSelections caveWater = WorldBuilder.GenerationSelections.Default;
+    }
+
     private static readonly Logging.Logger logger = Logging.CreateLogger<CaveBuilder>();
 
     private CaveMap cavemap;
@@ -29,15 +44,17 @@ public class CaveBuilder
 
     private int worldSize;
 
+    public readonly Settings settings;
 
     public readonly string caveTempDir = $"{GameIO.GetUserGameDataDir()}/temp";
 
     public CaveBuilder() { }
 
-    public CaveBuilder(WorldBuilder worldBuilder)
+    public CaveBuilder(WorldBuilder worldBuilder, Settings settings)
     {
         this.worldBuilder = worldBuilder;
         this.worldSize = worldBuilder.WorldSize;
+        this.settings = settings;
 
         cavemap = new CaveMap(worldSize);
         cavePrefabManager = new CavePrefabManager(worldBuilder);
@@ -182,7 +199,10 @@ public class CaveBuilder
             }
         }
 
-        cavemap.GenerateWater(cavePrefabManager, worldBuilder, localMinimas);
+        if (settings.GenerateWater)
+        {
+            cavemap.GenerateWater(cavePrefabManager, worldBuilder, localMinimas, settings.caveWater);
+        }
 
         if (worldBuilder.IsCanceled)
             return;
@@ -278,7 +298,10 @@ public class CaveBuilder
 
         Task.WaitAll(tasks.ToArray());
 
-        cavemap.GenerateWater(cavePrefabManager, worldBuilder, localMinimas);
+        if (settings.GenerateWater)
+        {
+            cavemap.GenerateWater(cavePrefabManager, worldBuilder, localMinimas, settings.caveWater);
+        }
 
         SpawnNaturalEntrances();
         SaveCaveMap(worldDatas);

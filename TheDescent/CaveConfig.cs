@@ -1,5 +1,4 @@
 using System;
-using WorldGenerationEngineFinal;
 
 public static class CaveConfig
 {
@@ -38,18 +37,4 @@ public static class CaveConfig
     public static int minSpawnDistBloodMoon = config.GetInt("minSpawnDistBloodMoon");
 
     public static float prefabScoreMultiplier = config.GetInt("prefabScoreMultiplier");
-
-    // cave generation datas
-    public static bool generateWater = false;
-
-    public static bool generateCaves = false;
-
-    public static float terrainOffset = 50;
-
-    public static WorldBuilder.GenerationSelections caveNetworks;
-
-    public static WorldBuilder.GenerationSelections caveEntrances;
-
-    public static WorldBuilder.GenerationSelections caveWater;
-
 }
