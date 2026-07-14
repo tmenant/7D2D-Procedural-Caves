@@ -241,7 +241,7 @@ public class CaveMap
         int index = 0;
         int count = 0;
 
-        var waterNoise = new WaterNoise(worldBuilder.Seed, waterConfig);
+        var waterNoise = new WaterNoise(1337, waterConfig);
 
         foreach (var waterStart in localMinimas)
         {
@@ -249,7 +249,7 @@ public class CaveMap
 
             var startPosition = waterStart.ToVector3i();
 
-            if (worldBuilder.IsCanceled || !waterNoise.IsWater(startPosition.x, startPosition.z) || IsWater(startPosition))
+            if (!waterNoise.IsWater(startPosition.x, startPosition.z) || IsWater(startPosition))
                 continue;
 
             count++;
@@ -258,7 +258,7 @@ public class CaveMap
 
             if (index % 100 == 0)
             {
-                worldBuilder.SetTaskMessage($"Water processing: {100.0f * index / localMinimas.Count:F0}%");
+                worldBuilder?.SetTaskMessage($"Water processing: {100.0f * index / localMinimas.Count:F0}%");
             }
 
             if (positions.Count > 0)

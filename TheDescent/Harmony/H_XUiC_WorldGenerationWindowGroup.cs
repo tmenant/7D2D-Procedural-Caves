@@ -19,6 +19,8 @@ public class H_XUiC_WorldGenerationWindow
     [HarmonyPatch(typeof(XUiC_WorldGenerationWindow), "OnOpen")]
     public static void OnOpen_Postfix(XUiC_WorldGenerationWindow __instance)
     {
+        // XUiC_WorldGenerationWindow is used on several components.
+        // This condition ensures that the patch runs only on that xui component: <window name='worldGeneration'>
         if (!(__instance.ViewComponent is XUiV_Window))
             return;
 

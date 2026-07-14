@@ -21,6 +21,8 @@ public class CaveBuilder
 
         public float terrainOffset = 50;
 
+        public int seed = 1337;
+
         public WorldBuilder.GenerationSelections caveNetworks = WorldBuilder.GenerationSelections.Default;
 
         public WorldBuilder.GenerationSelections caveEntrances = WorldBuilder.GenerationSelections.Default;
@@ -48,7 +50,10 @@ public class CaveBuilder
 
     public readonly string caveTempDir = $"{GameIO.GetUserGameDataDir()}/temp";
 
-    public CaveBuilder() { }
+    public CaveBuilder(Settings settings)
+    {
+        this.settings = settings;
+    }
 
     public CaveBuilder(WorldBuilder worldBuilder, Settings settings)
     {
