@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-07-22
+
+### Added
+- Add cave generation over existing worlds
+- Add a new cave generation menu in the editing tools
+
+### Changed
+- Refactor the global project architecture
+- Implement minor performance optimizations
+- Cave Decoration: Remove radiation barrels
+- Cave Decoration: Remove log hanging corpses
+- Cave Decoration: Remove cobwebs from cave ceilings (due to an ugly shader on this block)
+- Cave Decoration: Reduce spawn probability of all trash piles
+- Cave Decoration: Reduce spawn probability of `goreBlockHumanCorpse` and human skeletons
+- Cave Decoration: Reduce spawn probability of all barrels
+- Cave Loot: Scraping cave rocks now gives a chance to gather scrap brass, raw diamonds, silver nuggets, or gold nuggets
+- Cave Loot: Mining in caves now doubles the yield of all ores (except stone)
+
+### Fixed
+- Fix compatibility with V3.0.1 B4
+- Fix `DivideByZero` errors during cave graph generation by using a new Delaunay triangulation algorithm
+
 ## [2.2.1] - 2026-01-14
 
 ### Fixed
@@ -107,6 +129,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - First release
 
 [unreleased]: https://github.com/tmenant/7D2D-Procedural-Caves/compare/master...unreleased
+[3.0.0]: https://github.com/tmenant/7D2D-Procedural-Caves/compare/2.2.1...3.0.0
 [2.2.1]: https://github.com/tmenant/7D2D-Procedural-Caves/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/tmenant/7D2D-Procedural-Caves/compare/2.1.1...2.2.0
 [2.1.1]: https://github.com/tmenant/7D2D-Procedural-Caves/compare/2.1.0...2.1.1
