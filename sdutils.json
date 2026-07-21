@@ -1,6 +1,6 @@
 {
     "name": "TheDescent",
-    "csproj": "procedural-caves.csproj",
+    "csproj": "TheDescent/TheDescent.csproj",
     "include": [
         "ModInfo.xml",
         "ModConfig.xml",
@@ -10,10 +10,10 @@
         "UIAtlases"
     ],
     "dependencies": [
-        "../7D2D-cave-lights",
-        "../7D2D-cave-assets",
-        "../7D2D-cave-prefabs",
-        "../7D2D-cave-entities",
+        "../7D2D-TheDescent-cave-lights",
+        "../7D2D-TheDescent-cave-assets",
+        "../7D2D-TheDescent-cave-prefabs",
+        "../7D2D-TheDescent-cave-entities",
         "../7D2D-mod-utils"
     ],
     "clear_saves": [
@@ -31,6 +31,10 @@
         },
         {
             "world": "Old Bocera Moutains",
+            "save": "Caves"
+        },
+        {
+            "world": "Pregen06k01",
             "save": "Caves"
         }
     ]

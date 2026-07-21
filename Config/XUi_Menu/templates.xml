@@ -1,0 +1,11 @@
+<config>
+
+    <set xpath="/templates/world_list_entry/rect/@controller">XUiC_WorldEntryController, TheDescent</set>
+
+    <insertBefore xpath="/templates/world_list_entry//rect[@name='WorldName']">
+        <rect name="WorldName" pos="${parentinnerwidth - width_worldsize - width_version - width_location - 44 },16" width="44" padding="0,8">
+            <sprite depth="3" name="windowIcon" style="icon32px" sprite="ui_cave" visible="{hascave}" />
+        </rect>
+    </insertBefore>
+
+</config>

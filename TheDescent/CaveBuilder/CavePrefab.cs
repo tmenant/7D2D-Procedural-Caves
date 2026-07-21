@@ -1,0 +1,423 @@
+using System.Collections.Generic;
+using System.Linq;
+using Random = System.Random;
+
+public class CavePrefab
+{
+    private static readonly Logging.Logger logger = Logging.CreateLogger<CavePrefab>();
+
+    public PrefabDataInstance prefabDataInstance;
+
+    public Vector3i position;
+
+    private Vector3i _size;
+
+    public Vector3i Size
+    {
+        get => _size;
+
+        set
+        {
+            _size = value;
+
+            int dx = _size.x / 2;
+            int dy = _size.y / 2;
+            int dz = _size.z / 2;
+
+            BoundingRadiusSqr = dx * dx + dy * dy + dz * dz;
+        }
+    }
+
+    public int id;
+
+    public byte rotation;
+
+    public int BoundingRadiusSqr { get; internal set; }
+
+    public string PrefabName;
+
+    public FastTags<TagGroup.Poi> Tags => prefabDataInstance == null ? FastTags<TagGroup.Poi>.none : prefabDataInstance.prefab.Tags;
+
+    public bool isEntrance => Tags.Test_AnySet(CaveTags.tagCaveEntrance);
+
+    public bool isRoom = false;
+
+    public bool isCluster = false;
+
+    public bool isBoundaryPrefab = false;
+
+    public bool isNaturalEntrance = false;
+
+    public List<GraphNode> nodes = new List<GraphNode>();
+
+    public List<PrefabVolumes.Marker> caveMarkers = new List<PrefabVolumes.Marker>();
+
+    public CavePrefab() { }
+
+    public CavePrefab(int index)
+    {
+        id = index;
+    }
+
+    public CavePrefab(BoundingBox rectangle)
+    {
+        position = rectangle.start;
+        Size = rectangle.size;
+    }
+
+    public CavePrefab(int index, PrefabDataInstance pdi, Vector3i offset)
+    {
+        id = index;
+        rotation = pdi.rotation;
+        prefabDataInstance = pdi;
+        position = pdi.boundingBoxPosition + offset;
+        Size = CaveUtils.GetRotatedSize(pdi.boundingBoxSize, rotation);
+        PrefabName = pdi.prefab.Name;
+
+        UpdateMarkers(pdi);
+    }
+
+    public CavePrefab(int index, Vector3i position, Random rand, int markerCount)
+    {
+        this.position = position;
+        id = index;
+        int minPrefabSize = 8;
+        int maxPrefabSize = 100;
+
+        Size = new Vector3i(
+            rand.Next(minPrefabSize, maxPrefabSize),
+            rand.Next(minPrefabSize, maxPrefabSize),
+            rand.Next(minPrefabSize, maxPrefabSize)
+        );
+
+        UpdateMarkers(rand, markerCount);
+    }
+
+    public void AddNodes(IEnumerable<GraphNode> _nodes)
+    {
+        foreach (var node in _nodes)
+        {
+            node.prefab = this;
+            nodes.Add(node);
+        }
+    }
+
+    public PrefabVolumes.Marker RandomMarker(Random rand, int rotation, int xMax, int yMax, int zMax, bool aligned = true)
+    {
+        var markerType = PrefabVolumes.Marker.MarkerTypes.None;
+        var tags = FastTags<TagGroup.Poi>.none;
+        var groupName = "";
+
+        // var maxMarkerSize = 10;
+        int sizeX = Utils.FastMin(5, xMax); // rand.Next(Utils.FastMin(2, xMax), Utils.FastMin(maxMarkerSize, xMax));
+        int sizeY = Utils.FastMin(5, yMax); // rand.Next(Utils.FastMin(2, yMax), Utils.FastMin(maxMarkerSize, yMax));
+        int sizeZ = Utils.FastMin(5, zMax); // rand.Next(Utils.FastMin(2, zMax), Utils.FastMin(maxMarkerSize, zMax));
+
+        int px = aligned ? Size.x / 2 : rand.Next(1, xMax);
+        int pz = aligned ? Size.z / 2 : rand.Next(1, zMax);
+        int py = Size.y / 2;
+
+        switch (rotation)
+        {
+            case 0:
+                pz = -1;
+                break;
+
+            case 1:
+                pz = Size.z;
+                break;
+
+            case 2:
+                px = -1;
+                break;
+
+            case 3:
+                px = Size.x;
+                break;
+        }
+
+        var markerStart = new Vector3i(px, py, pz);
+        var markerSize = new Vector3i(sizeX, sizeY, sizeZ);
+
+        return new PrefabVolumes.Marker()
+        {
+            startPos = markerStart,
+            size = markerSize,
+            MarkerType = markerType,
+            GroupName = groupName,
+            Tags = tags,
+        };
+    }
+
+    public void UpdateMarkers(PrefabDataInstance pdi)
+    {
+        nodes = new List<GraphNode>();
+        caveMarkers = new List<PrefabVolumes.Marker>();
+
+        foreach (var marker in pdi.prefab.RotatePOIMarkers(true, rotation))
+        {
+            if (!marker.tags.Test_AnySet(CaveTags.tagCaveMarker))
+                continue;
+
+            caveMarkers.Add(marker);
+            nodes.Add(new GraphNode(marker, this));
+        }
+    }
+
+    public void UpdateMarkers(Random rand, int markerCount)
+    {
+        caveMarkers = new List<PrefabVolumes.Marker>();
+
+        var positions = new HashSet<Vector3i>();
+        var addedMarkers = 0;
+
+        while (addedMarkers < markerCount)
+        {
+            int xMax = 0;
+            int zMax = 0;
+            int rotation = rand.Next(4);
+
+            switch (rotation)
+            {
+                case 0:
+                case 1:
+                    xMax = Size.x - 2;
+                    zMax = 1;
+                    break;
+
+                case 2:
+                case 3:
+                    xMax = 1;
+                    zMax = Size.z - 2;
+                    break;
+            }
+
+            var marker = RandomMarker(rand, rotation, xMax, Size.y, zMax, false);
+
+            if (!positions.Contains(marker.startPos))
+            {
+                positions.Add(marker.startPos);
+                caveMarkers.Add(marker);
+                addedMarkers++;
+            }
+        }
+
+        UpdateMarkers(caveMarkers);
+    }
+
+    public void UpdateMarkers(Random rand)
+    {
+        caveMarkers = new List<PrefabVolumes.Marker>(){
+            RandomMarker(rand, 0, Size.x - 2, Size.y, 1),
+            RandomMarker(rand, 1, Size.x - 2, Size.y, 1),
+            RandomMarker(rand, 2, 1, Size.y, Size.z - 2),
+            RandomMarker(rand, 3, 1, Size.y, Size.z - 2),
+        };
+
+        UpdateMarkers(caveMarkers);
+    }
+
+    public void UpdateMarkers(List<PrefabVolumes.Marker> markers)
+    {
+        nodes = new List<GraphNode>();
+
+        foreach (var marker in markers)
+        {
+            CaveUtils.Assert(marker != null, "null marker");
+            CaveUtils.Assert(marker.size != Vector3i.zero, "null marker size");
+
+            nodes.Add(new GraphNode(marker, this));
+        }
+    }
+
+    public void RemoveMarker(Direction direction)
+    {
+        for (int i = nodes.Count - 1; i >= 0; i--)
+        {
+            if (nodes[i].direction.Equals(direction))
+            {
+                nodes.RemoveAt(i);
+            }
+        }
+    }
+
+    public HashSet<Vector3i> GetMarkerPoints()
+    {
+        var result = new HashSet<Vector3i>();
+
+        for (int i = 0; i < caveMarkers.Count; i++)
+        {
+            var marker = caveMarkers[i];
+            var markerPoints = CaveUtils.GetPointsInside(position + marker.startPos, position + marker.startPos + marker.size);
+
+            result.UnionWith(markerPoints);
+        }
+
+        return result;
+    }
+
+    public void SetRandomPosition(IRawHeightMap heightMap, Random rand, int mapSize)
+    {
+        int offset = CaveConfig.radiationSize + CaveConfig.radiationZoneMargin;
+
+        position = new Vector3i(
+            rand.Next(offset, mapSize - offset - Size.x),
+            0,
+            rand.Next(offset, mapSize - offset - Size.z)
+        );
+
+        position.y = rand.Next(CaveConfig.bedRockMargin, (int)(heightMap.GetHeight(position.x, position.y) - Size.y));
+
+        foreach (var node in nodes)
+        {
+            node.position = position + node.marker.startPos;
+        }
+    }
+
+    public bool OverLaps2D(CavePrefab other, int margin)
+    {
+        return CaveUtils.OverLaps2D(position, Size, other.position, other.Size, margin);
+    }
+
+    public bool OverLaps2D(List<CavePrefab> others, int margin)
+    {
+        foreach (var prefab in others)
+        {
+            if (OverLaps2D(prefab, margin))
+                return true;
+        }
+
+        return false;
+    }
+
+    public bool Intersect2D(Vector3i pos)
+    {
+        return CaveUtils.Intersect2D(pos.x, pos.z, position, Size);
+    }
+
+    public bool Intersect3D(Vector3i pos)
+    {
+        return CaveUtils.Intersect3D(pos.x, pos.y, pos.z, position, Size);
+    }
+
+    public bool IsUndergroundPrefab()
+    {
+        return Tags.Test_AnySet(CaveTags.tagUnderground);
+    }
+
+    private List<Vector3i> GetBoundingPoints()
+    {
+        var points = new HashSet<Vector3i>();
+
+        int x0 = position.x;
+        int y0 = position.y;
+        int z0 = position.z;
+
+        int x1 = x0 + Size.x;
+        int y1 = y0 + Size.y;
+        int z1 = z0 + Size.z;
+
+        for (int x = x0; x < x1; x++)
+        {
+            for (int y = y0; y < y1; y++)
+            {
+                points.Add(new Vector3i(x, y, z0));
+                points.Add(new Vector3i(x, y, z1));
+            }
+        }
+
+        for (int y = y0; y < y1; y++)
+        {
+            for (int z = z0; z < z1; z++)
+            {
+                points.Add(new Vector3i(x0, y, z));
+                points.Add(new Vector3i(x1, y, z));
+            }
+        }
+
+        for (int z = z0; z < z1; z++)
+        {
+            for (int x = x0; x < x1; x++)
+            {
+                points.Add(new Vector3i(x, y0, z));
+                points.Add(new Vector3i(x, y1, z));
+            }
+        }
+
+        return points.ToList();
+    }
+
+    public Vector3i GetCenter()
+    {
+        return new Vector3i(
+            position.x + Size.x / 2,
+            position.y + Size.y / 2,
+            position.z + Size.z / 2
+        );
+    }
+
+    public IEnumerable<Vector2s> GetOverlappingChunks()
+    {
+        var x0chunk = position.x >> 4;
+        var z0chunk = position.z >> 4;
+        var x1Chunk = (position.x + Size.x - 1) >> 4;
+        var z1Chunk = (position.z + Size.z - 1) >> 4;
+
+        for (int x = x0chunk; x <= x1Chunk; x++)
+        {
+            for (int z = z0chunk; z <= z1Chunk; z++)
+            {
+                yield return new Vector2s(x, z);
+            }
+        }
+    }
+
+    public bool IntersectMarker(int x, int y, int z)
+    {
+        bool posIsNotOnBounds =
+            x != position.x - 1 && x != position.x + Size.x &&
+            z != position.z - 1 && z != position.z + Size.z;
+
+        if (posIsNotOnBounds)
+            return false;
+
+        foreach (var marker in caveMarkers)
+        {
+            var start = position + marker.startPos;
+
+            if (CaveUtils.Intersect3D(x, y, z, start, marker.size))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return position.GetHashCode();
+    }
+
+    public override bool Equals(object obj)
+    {
+        var other = (CavePrefab)obj;
+
+        return GetHashCode() == other.GetHashCode();
+    }
+
+    public IEnumerable<DelaunayPoint> DelaunayPoints()
+    {
+        if (nodes == null)
+        {
+            logger.Warning($"null cavePrefab nodes, isCluster: {isCluster}, isroom: {isRoom}, isBoundaryPrefab: {isBoundaryPrefab}, null pdi: {prefabDataInstance is null}, prefab name: {PrefabName}");
+            yield break;
+        }
+
+        foreach (var node in nodes)
+        {
+            yield return new DelaunayPoint(node);
+        }
+    }
+
+}

@@ -1,0 +1,7 @@
+<config>
+    <append xpath="/xui">
+        <window_group name="caveEditor">
+            <window name="caveEditor" />
+        </window_group>
+    </append>
+</config>
