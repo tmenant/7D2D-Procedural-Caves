@@ -242,6 +242,13 @@
             <property name="CreativeMode" value="Dev" />
             <property name="CustomIconTint" value="A72D34" />
             <property name="CustomIcon" value="terrOreIron" />
+
+            <drop event="Harvest" name="resourceScrapIron" count="210" tag="oreWoodHarvest" />
+            <drop event="Harvest" name="resourceRockSmall" count="14" tag="oreWoodHarvest" />
+            <drop event="Harvest" name="resourceScrapBrass" prob=".10" count="200,400" tag="perkStrengthMasteryBrassHarvest" />
+            <drop event="Harvest" name="resourceRawDiamond" prob=".010" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceSilverNugget" prob=".02" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceGoldNugget" prob=".014" count="1" tag="artOfMiningLuckyStrikeHarvest" />
         </block>
 
         <block name="caveTerrOreLead">
@@ -250,6 +257,13 @@
             <property name="CreativeMode" value="Dev" />
             <property name="CustomIconTint" value="A72D34" />
             <property name="CustomIcon" value="terrOreLead" />
+
+            <drop event="Harvest" name="resourceScrapLead" count="100" tag="oreWoodHarvest" />
+            <drop event="Harvest" name="resourceRockSmall" count="14" tag="oreWoodHarvest" />
+            <drop event="Harvest" name="resourceScrapBrass" prob=".10" count="100,200" tag="perkStrengthMasteryBrassHarvest" />
+            <drop event="Harvest" name="resourceRawDiamond" prob=".010" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceSilverNugget" prob=".02" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceGoldNugget" prob=".014" count="1" tag="artOfMiningLuckyStrikeHarvest" />
         </block>
 
         <block name="caveTerrOreCoal">
@@ -258,6 +272,14 @@
             <property name="CreativeMode" value="Dev" />
             <property name="CustomIconTint" value="A72D34" />
             <property name="CustomIcon" value="terrOreCoal" />
+
+            <drop event="Harvest" name="resourceCoal" count="100" tag="oreWoodHarvest" />
+            <drop event="Harvest" name="resourceRockSmall" count="14" tag="oreWoodHarvest" />
+            <drop event="Harvest" name="resourceCoal" count="100" tag="coalHarvest" />
+            <drop event="Harvest" name="resourceScrapBrass" prob=".10" count="100,200" tag="perkStrengthMasteryBrassHarvest" />
+            <drop event="Harvest" name="resourceRawDiamond" prob=".010" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceSilverNugget" prob=".02" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceGoldNugget" prob=".014" count="1" tag="artOfMiningLuckyStrikeHarvest" />
         </block>
 
         <block name="caveTerrOrePotassiumNitrate">
@@ -266,6 +288,13 @@
             <property name="CreativeMode" value="Dev" />
             <property name="CustomIconTint" value="A72D34" />
             <property name="CustomIcon" value="terrOrePotassiumNitrate" />
+
+            <drop event="Harvest" name="resourcePotassiumNitratePowder" count="100" tag="oreWoodHarvest" />
+            <drop event="Harvest" name="resourceRockSmall" count="14" tag="oreWoodHarvest" />
+            <drop event="Harvest" name="resourceScrapBrass" prob=".10" count="100,200" tag="perkStrengthMasteryBrassHarvest" />
+            <drop event="Harvest" name="resourceRawDiamond" prob=".010" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceSilverNugget" prob=".02" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceGoldNugget" prob=".014" count="1" tag="artOfMiningLuckyStrikeHarvest" />
         </block>
 
         <block name="caveTerrOreOilDeposit">
@@ -274,6 +303,13 @@
             <property name="CreativeMode" value="Dev" />
             <property name="CustomIconTint" value="A72D34" />
             <property name="CustomIcon" value="terrOreOilDeposit" />
+
+            <drop event="Harvest" name="resourceOilShale" count="100" tag="oreWoodHarvest" />
+            <drop event="Harvest" name="resourceRockSmall" count="14" tag="oreWoodHarvest" />
+            <drop event="Harvest" name="resourceScrapBrass" prob=".10" count="100,200" tag="perkStrengthMasteryBrassHarvest" />
+            <drop event="Harvest" name="resourceRawDiamond" prob=".010" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceSilverNugget" prob=".02" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceGoldNugget" prob=".014" count="1" tag="artOfMiningLuckyStrikeHarvest" />
         </block>
 
         <!-- cave rocks -->
@@ -282,30 +318,55 @@
             <property name="CreativeMode" value="Dev" />
             <property name="Model" value="Entities/OutdoorDecor/stoneAPrefab" />
             <property name="CustomIcon" value="rock01" />
+
+            <drop event="Harvest" name="resourceScrapBrass" prob=".10" count="100,200" tag="perkStrengthMasteryBrassHarvest" />
+            <drop event="Harvest" name="resourceRawDiamond" prob=".010" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceSilverNugget" prob=".02" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceGoldNugget" prob=".014" count="1" tag="artOfMiningLuckyStrikeHarvest" />
         </block>
 
         <block name="caveRock02">
             <property name="Extends" value="caveRock01" />
             <property name="CreativeMode" value="Dev" />
             <property name="Model" value="Entities/OutdoorDecor/stoneBPrefab" />
+
+            <drop event="Harvest" name="resourceScrapBrass" prob=".10" count="100,200" tag="perkStrengthMasteryBrassHarvest" />
+            <drop event="Harvest" name="resourceRawDiamond" prob=".010" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceSilverNugget" prob=".02" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceGoldNugget" prob=".014" count="1" tag="artOfMiningLuckyStrikeHarvest" />
         </block>
 
         <block name="caveRock03">
             <property name="Extends" value="caveRock01" />
             <property name="CreativeMode" value="Dev" />
             <property name="Model" value="Entities/OutdoorDecor/stoneCPrefab" />
+
+            <drop event="Harvest" name="resourceScrapBrass" prob=".10" count="100,200" tag="perkStrengthMasteryBrassHarvest" />
+            <drop event="Harvest" name="resourceRawDiamond" prob=".010" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceSilverNugget" prob=".02" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceGoldNugget" prob=".014" count="1" tag="artOfMiningLuckyStrikeHarvest" />
         </block>
 
         <block name="caveRock04">
             <property name="Extends" value="caveRock01" />
             <property name="CreativeMode" value="Dev" />
             <property name="Model" value="Entities/OutdoorDecor/stoneDPrefab" />
+
+            <drop event="Harvest" name="resourceScrapBrass" prob=".10" count="100,200" tag="perkStrengthMasteryBrassHarvest" />
+            <drop event="Harvest" name="resourceRawDiamond" prob=".010" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceSilverNugget" prob=".02" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceGoldNugget" prob=".014" count="1" tag="artOfMiningLuckyStrikeHarvest" />
         </block>
 
         <block name="caveRock05">
             <property name="Extends" value="caveRock01" />
             <property name="CreativeMode" value="Dev" />
             <property name="Model" value="Entities/OutdoorDecor/stoneEPrefab" />
+
+            <drop event="Harvest" name="resourceScrapBrass" prob=".10" count="100,200" tag="perkStrengthMasteryBrassHarvest" />
+            <drop event="Harvest" name="resourceRawDiamond" prob=".010" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceSilverNugget" prob=".02" count="1" tag="artOfMiningLuckyStrikeHarvest" />
+            <drop event="Harvest" name="resourceGoldNugget" prob=".014" count="1" tag="artOfMiningLuckyStrikeHarvest" />
         </block>
 
         <!-- loot container (see placeholders.xml where name starts with 'caveCtn') -->
