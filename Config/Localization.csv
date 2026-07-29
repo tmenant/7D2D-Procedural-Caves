@@ -1,19 +1,19 @@
 Key,english,french,russian
 xuiCaveNetworksDesc,The amount of cave networks generated. Set None to disable cave generation,La quantité de réseaux de grottes à générer. Mettre aucun pour désactiver la génération de grottes,"Количество генерируемых сетей пещер. Установите None, чтобы отключить создание пещер"
 xuiCaveNetworks,Caves,Grottes,Пещеры
-xuiCaveEntrancesDesc,The amount of wilderness cave entrances to spawn,La quantité d'entrées de grottes sauvages à faire apparaitre,Количество появляющихся входов в пещеры в дикой местности
+xuiCaveEntrancesDesc,The amount of wilderness cave entrances to spawn,La quantité d'entrées de grottes sauvages à faire apparaitre,Количество появляющихся в дикой местности входов в пещеры
 xuiCaveEntrances,Cave entrances,Entrées de grottes,Входы в пещеры
 xuiCaveWaterDesc,The amount of water generated in cave tunnels,La quantité d'eau qui sera générée dans les tunnels de grotte,"Количество воды, генерирующейся в пещерных туннелях"
 xuiCaveWater,Cave water,Humidité des grottes,Пещерная вода
-xuiCavePreviewDesc,Switch between vanilla preview and cave preview,Affiche l'aperçu du jeu de base ou l'aperçu des grottes,Переключение между ванильным предпросмотром и предпросмотром пещер
+xuiCavePreviewDesc,Switch between vanilla preview and cave preview,Affiche l'aperçu du jeu de base ou l'aperçu des grottes,Переключение между ванильным и пещерным предпросмотром
 xuiCavePreview,Preview type,Type d'aperçu,Тип предпросмотра
 xuiTerrainOffsetDesc,Increase vanilla terrain height,Augmente la profondeur de base du terrain,Увеличить высоту ванильного ландшафта
 xuiTerrainOffset,Terrain offset,Décalage du terrain,Смещение ландшафта
-xuiCaveEditor,Cave Editor,Editeur de grottes,
-xuiCaveFeatures,Cave Settings,Paramètres de grottes
-xuiGenerateCaves,Generate Caves,Générer Grottes
-xuiDeleteCaves,Delete Caves,Supprimer Grottes
-crystalCollection,Rare Gems collection,Collection de pierre précieuses,Коллекция редких драгоценных камней
+xuiCaveEditor,Cave Editor,Editeur de grottes,Редактор пещер
+xuiCaveFeatures,Cave Settings,Paramètres de grottes,Настройки пещер
+xuiGenerateCaves,Generate Caves,Générer Grottes,Сгенерировать пещеры
+xuiDeleteCaves,Delete Caves,Supprimer Grottes,Удалить пещеры
+crystalCollection,Rare Gems Collection,Collection de pierre précieuses,Коллекция редких драгоценных камней
 crystal01,Ruby,Rubis,Рубин
 crystal02,Amethyst,Améthyste,Аметист
 crystal03,Amber,Ambre,Янтарь
